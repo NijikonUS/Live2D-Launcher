@@ -5,7 +5,20 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     android:paddingBottom="@dimen/activity_vertical_margin" tools:context=".Launcher">
 
-    <TextView android:text="@string/hello_world" android:layout_width="wrap_content"
+   <FrameLayout
+       android:id="@+id/live2dLayout"
+       android:layout_width="match_parent"
+       android:layout_height="match_parent"
+       android:layout_alignParentLeft="true"
+       android:layout_alignParentTop="true"
+       />
+    <ImageButton
+        android:id="@+id/appMenu"
+        android:src= "@mipmap/ic_launcher"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentLeft="true"
+        android:layout_margin="10dp"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content" />
 
 </RelativeLayout>
