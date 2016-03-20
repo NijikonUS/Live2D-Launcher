@@ -1,9 +1,5 @@
 /**
- *
- *  You can modify and use this source freely
- *  only for the development of application related Live2D.
- *
- *  (c) Live2D Inc. All rights reserved.
+ *  modified by bowang
  */
 package us.nijikon.livelylauncher.live2dHelpers;
 
@@ -112,7 +108,7 @@ public class LAppModel extends L2DBaseModel
 		}
 
 		
-		loadPhysics( modelHomeDir+modelSetting.getPhysicsFile() );
+		loadPhysics(modelHomeDir + modelSetting.getPhysicsFile());
 
 		
 		//loadPose(modelHomeDir+modelSetting.getPoseFile());
