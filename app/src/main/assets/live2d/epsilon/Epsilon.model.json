@@ -1,59 +1,71 @@
 {
 	"version":"Sample 1.0.0",
+    "names":"Epsilon",
 	"model":"Epsilon.moc",
 	"textures":[
 		"Epsilon.1024/texture_00.png",
 		"Epsilon.1024/texture_01.png",
 		"Epsilon.1024/texture_02.png"
 	],
+  "layout":
+  {
+	"center_x":0,
+	"y":1.2,
+	"width":2.9
+  },
+  "hit_areas":
+  [
+	{"name":"head", "id":"D_REF.HEAD"},
+	{"name":"body", "id":"D_REF.BODY"}
+  ],
 	"motions":{
 		"idle":[
 			{
-				"file":"motions/Epsilon_idle_01.mtn"
+				"file":"motions/Epsilon_idle_01.mtn","fade_in":2000, "fade_out":2000
 			}
 		],
-		"null":[
+		"test":[
 			{
-				"file":"motions/Epsilon_m_01.mtn"
+				"file":"motions/Epsilon_m_01.mtn","fade_in":2000, "fade_out":2000
 			},
 			{
-				"file":"motions/Epsilon_m_02.mtn"
+				"file":"motions/Epsilon_m_02.mtn","fade_in":2000, "fade_out":2000
 			},
 			{
-				"file":"motions/Epsilon_m_03.mtn"
+				"file":"motions/Epsilon_m_03.mtn","fade_in":2000, "fade_out":2000
 			},
 			{
-				"file":"motions/Epsilon_m_04.mtn"
+				"file":"motions/Epsilon_m_04.mtn","fade_in":2000, "fade_out":2000
 			},
 			{
-				"file":"motions/Epsilon_m_05.mtn"
+				"file":"motions/Epsilon_m_05.mtn","fade_in":2000, "fade_out":2000
 			},
 			{
-				"file":"motions/Epsilon_m_06.mtn"
+				"file":"motions/Epsilon_m_06.mtn","fade_in":2000, "fade_out":2000
 			},
 			{
-				"file":"motions/Epsilon_m_07.mtn"
+				"file":"motions/Epsilon_m_07.mtn","fade_in":2000, "fade_out":2000
 			},
 			{
-				"file":"motions/Epsilon_m_08.mtn"
+				"file":"motions/Epsilon_m_08.mtn","fade_in":2000, "fade_out":2000
 			},
 			{
-				"file":"motions/Epsilon_m_sp_01.mtn"
+				"file":"motions/Epsilon_m_sp_01.mtn","fade_in":2000, "fade_out":2000
 			},
 			{
-				"file":"motions/Epsilon_m_sp_02.mtn"
+				"file":"motions/Epsilon_m_sp_02.mtn","fade_in":2000, "fade_out":2000
 			},
 			{
-				"file":"motions/Epsilon_m_sp_03.mtn"
+				"file":"motions/Epsilon_m_sp_03.mtn","fade_in":2000, "fade_out":2000
 			},
 			{
-				"file":"motions/Epsilon_m_sp_04.mtn"
+				"file":"motions/Epsilon_m_sp_04.mtn","fade_in":2000, "fade_out":2000
 			},
 			{
-				"file":"motions/Epsilon_m_sp_05.mtn"
+				"file":"motions/Epsilon_m_sp_05.mtn","fade_in":2000, "fade_out":2000
 			},
 			{
-				"file":"motions/Epsilon_shake_01.mtn"
+				"file":"motions/Epsilon_shake_01.mtn","fade_in":2000, "fade_out":2000
 			}
 		]
 	},
