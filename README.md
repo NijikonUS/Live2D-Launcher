@@ -1,2 +1,1 @@
-# LivelyLauncher
-* 17 March init
+# LivelyLauncher-Voice Recognition
