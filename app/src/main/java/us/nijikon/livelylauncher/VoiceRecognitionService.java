@@ -14,7 +14,7 @@ import java.util.ArrayList;
  * Created by Ray on 2016/3/27.
  */
 public class VoiceRecognitionService {
-    private static final String TAG = Launcher.class.getName();
+    private static final String TAG = VoiceRecognitionActivity.class.getName();
 
     private final SpeechRecognizer speechRecognizer;
 
@@ -27,10 +27,10 @@ public class VoiceRecognitionService {
     private String result;
 
 
-    public VoiceRecognitionService(Launcher launcher) {
-        textView = launcher.getTextView();
+    public VoiceRecognitionService(VoiceRecognitionActivity voiceRecognitionActivity) {
+        textView = voiceRecognitionActivity.getTextView();
 
-        speechRecognizer = SpeechRecognizer.createSpeechRecognizer(launcher);
+        speechRecognizer = SpeechRecognizer.createSpeechRecognizer(voiceRecognitionActivity);
         speechLitsener = new SpeechListener();
         speechRecognizer.setRecognitionListener(speechLitsener);
         speechIntent = new Intent();

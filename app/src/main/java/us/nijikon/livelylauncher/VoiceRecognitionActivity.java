@@ -1,24 +1,14 @@
 package us.nijikon.livelylauncher;
 
-import android.Manifest;
 import android.app.Activity;
-import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.os.Bundle;
-import android.speech.RecognitionListener;
-import android.speech.RecognizerIntent;
 import android.speech.SpeechRecognizer;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.content.ContextCompat;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
 
-import java.util.ArrayList;
-
-public class Launcher extends Activity {
+public class VoiceRecognitionActivity extends Activity {
     private static final int MY_PERMISSIONS_REQUEST_RECORD_AUDIO = 1;
 
     private VoiceRecognitionService voiceRecognitionService;
@@ -29,7 +19,7 @@ public class Launcher extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_launcher);
+        setContentView(R.layout.activity_voice_recognition);
         textView = (TextView) findViewById(R.id.textview_display_result);
     }
 
