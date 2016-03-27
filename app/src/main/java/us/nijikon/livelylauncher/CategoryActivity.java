@@ -11,7 +11,7 @@ public class CategoryActivity extends Activity {
     private RecyclerView mRecyclerView;
     private RecyclerView.Adapter mAdapter;
     private RecyclerView.LayoutManager mLayoutManager;
-    private String[] category={"Contact","Note"};
+    private String[] category= {"Contact","Note","Movie","Eat","Shop","Sport"};
 
 
     @Override
@@ -24,9 +24,7 @@ public class CategoryActivity extends Activity {
 
         mLayoutManager = new LinearLayoutManager(this);
         mRecyclerView.setLayoutManager(mLayoutManager);
-        Log.i("heloo", "world");
         mAdapter = new MyAdapter(category);
-        Log.i("heloo", "world2");
 
         mRecyclerView.setAdapter(mAdapter);
 
