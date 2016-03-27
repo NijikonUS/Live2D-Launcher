@@ -3,11 +3,15 @@ package us.nijikon.livelylauncher.launcher;
 import android.app.Activity;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
+import android.content.Context;
 import android.os.Bundle;
+import android.support.v4.view.ViewPropertyAnimatorCompat;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewAnimationUtils;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
@@ -23,11 +27,13 @@ public class Launcher extends Activity {
     private LAppLive2DManager live2DMgr;
     private FragmentManager fragmentManager;
     private ImageButton appButton;
-    private boolean isOpen = false;//use to control open or close fragment
+    private AppFragment appFragment;
+
 
     public Launcher(){
  //       instance = this;
         live2DMgr = new LAppLive2DManager();
+        appFragment = new AppFragment();
     }
 
 
@@ -41,16 +47,17 @@ public class Launcher extends Activity {
         appButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                // avoid multiple clicking
                 appButton.setEnabled(false);
+                appButton.setVisibility(View.INVISIBLE);
                 FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-                AppFragment appFragment = new AppFragment();
                 fragmentTransaction.add(R.id.main, appFragment);
-                fragmentTransaction.addToBackStack("appfragment");
+                fragmentTransaction.addToBackStack(AppFragment.tag);
+                fragmentTransaction.setCustomAnimations(R.animator.left_in,0).show(appFragment);
                 fragmentTransaction.commit();
 
             }
         });
-
 
 
 
@@ -102,6 +109,7 @@ public class Launcher extends Activity {
     @Override
     protected void onPause()
     {
+        fragmentManager.popBackStack(AppFragment.tag,FragmentManager.POP_BACK_STACK_INCLUSIVE);
         live2DMgr.onPause() ;
         super.onPause();
     }

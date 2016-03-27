@@ -14,24 +14,25 @@ public class AppModel {
 
     public static final String tag = "AppModel";
 
-    private final ApplicationInfo info;
+
     private final Context context;
     private String appName;
     private Drawable appIcon;
+    private String packageName;
 
-    private final File appFile;
+    private final String sourceDir;
 
-    public AppModel(Context context, ApplicationInfo info) {
+    public AppModel(Context context, String appName, Drawable appIcon, String packageName, String sourceDir) {
         this.context = context;
-        this.info = info;
-        this.appFile = new File(info.sourceDir);
-        appIcon = info.loadIcon(context.getPackageManager());
-        appName = info.loadLabel(context.getPackageManager()).toString();
+        this.appName =appName;
+        this.appIcon = appIcon;
+        this.packageName = packageName;
+        this.sourceDir =sourceDir;
     }
 
 
-    public File getAppFile() {
-        return appFile;
+    public String getSourceDir() {
+        return sourceDir;
     }
 
     public Drawable getAppIcon() {
@@ -46,7 +47,9 @@ public class AppModel {
         return context;
     }
 
-    public ApplicationInfo getInfo() {
-        return info;
+
+
+    public String getPackageName() {
+        return packageName;
     }
 }

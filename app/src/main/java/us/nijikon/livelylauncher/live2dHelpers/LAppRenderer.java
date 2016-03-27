@@ -36,7 +36,7 @@ public class LAppRenderer implements GLSurfaceView.Renderer {
 	@Override
 	public void onSurfaceCreated(GL10 context, EGLConfig arg1) {
 
-		//setupBackground(context);
+		setupBackground(context);
 	}
 
 
@@ -155,21 +155,21 @@ public class LAppRenderer implements GLSurfaceView.Renderer {
 
 
 	
-//	private void setupBackground(GL10 context) {
-//		try {
-//			InputStream in = FileManager.open(LAppDefine.BACK_IMAGE_NAME);
-//			bg=new SimpleImage(context,in);
-//
-//			bg.setDrawRect(
-//					LAppDefine.VIEW_LOGICAL_MAX_LEFT,
-//					LAppDefine.VIEW_LOGICAL_MAX_RIGHT,
-//					LAppDefine.VIEW_LOGICAL_MAX_BOTTOM,
-//					LAppDefine.VIEW_LOGICAL_MAX_TOP);
-//
-//
-//			bg.setUVRect(0.0f,1.0f,0.0f,1.0f);
-//		} catch (IOException e) {
-//			e.printStackTrace();
-//		}
-//	}
+	private void setupBackground(GL10 context) {
+		try {
+			InputStream in = FileManager.open("image/walltest.png");
+			bg=new SimpleImage(context,in);
+
+			bg.setDrawRect(
+					LAppDefine.VIEW_LOGICAL_MAX_LEFT,
+					LAppDefine.VIEW_LOGICAL_MAX_RIGHT,
+					LAppDefine.VIEW_LOGICAL_MAX_BOTTOM,
+					LAppDefine.VIEW_LOGICAL_MAX_TOP);
+
+
+			bg.setUVRect(0.0f,2.0f,0.0f,2.0f);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
 }
