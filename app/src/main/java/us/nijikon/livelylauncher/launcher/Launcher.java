@@ -1,9 +1,12 @@
 package us.nijikon.livelylauncher.launcher;
 
 import android.app.Activity;
+import android.app.FragmentManager;
+import android.app.FragmentTransaction;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
@@ -17,11 +20,13 @@ import us.nijikon.livelylauncher.live2dHelpers.LAppLive2DManager;
 import us.nijikon.livelylauncher.live2dHelpers.LAppView;
 
 public class Launcher extends Activity {
-    private LAppLive2DManager live2DMgr ;
-    static private Activity instance;
+    private LAppLive2DManager live2DMgr;
+    private FragmentManager fragmentManager;
+    private ImageButton appButton;
+    private boolean isOpen = false;//use to control open or close fragment
 
     public Launcher(){
-        instance = this;
+ //       instance = this;
         live2DMgr = new LAppLive2DManager();
     }
 
@@ -30,6 +35,24 @@ public class Launcher extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_launcher);
+        fragmentManager = getFragmentManager();
+        appButton = (ImageButton)findViewById(R.id.appButton);
+        appButton.setEnabled(true);
+        appButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                appButton.setEnabled(false);
+                FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+                AppFragment appFragment = new AppFragment();
+                fragmentTransaction.add(R.id.main, appFragment);
+                fragmentTransaction.addToBackStack("appfragment");
+                fragmentTransaction.commit();
+
+            }
+        });
+
+
+
 
         setupGUI();
         FileManager.init(this.getApplicationContext());
