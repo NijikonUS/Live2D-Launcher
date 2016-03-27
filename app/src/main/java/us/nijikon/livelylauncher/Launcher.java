@@ -64,6 +64,9 @@ public class Launcher extends Activity {
 
     @Override
     protected void onStart () {
+
+
+
         if (ContextCompat.checkSelfPermission(this,
                 Manifest.permission.READ_CONTACTS)
                 != PackageManager.PERMISSION_GRANTED) {
@@ -115,7 +118,6 @@ public class Launcher extends Activity {
 
         //Check if this device supports Voice Recognition Service
         if (!SpeechRecognizer.isRecognitionAvailable(this)) {
-
         }
         else {
             speechRecognizer.startListening(speechIntent);
@@ -160,7 +162,6 @@ public class Launcher extends Activity {
             //else ask to repeats
             else{
                 Log.d(TAG, "other error");
-                speechRecognizer.startListening(speechIntent);
             }
         }
         public void onEvent(int eventType, Bundle params) {
@@ -180,6 +181,7 @@ public class Launcher extends Activity {
                 if (matches != null) {
                     textView.setText(matches.get(0));
                     Log.d(TAG, matches.toString());
+                    speechRecognizer.stopListening();
                 }
 
             }
