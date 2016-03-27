@@ -64,8 +64,12 @@ public class VoiceRecognitionService {
         }
         public void onError(int error) {
             //if critical error then exit
-            if(error == SpeechRecognizer.ERROR_CLIENT || error == SpeechRecognizer.ERROR_INSUFFICIENT_PERMISSIONS){
+            if(error == SpeechRecognizer.ERROR_CLIENT) {
                 Log.d(TAG, "client error");
+            }
+
+            if (error == SpeechRecognizer.ERROR_INSUFFICIENT_PERMISSIONS){
+                Log.d(TAG, "permission error");
             }
             //else ask to repeats
             else{
