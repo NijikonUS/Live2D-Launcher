@@ -24,6 +24,9 @@ public class VoiceRecognitionService {
 
     private final TextView textView;
 
+    private String result;
+
+
     public VoiceRecognitionService(Launcher launcher) {
         textView = launcher.getTextView();
 
@@ -75,7 +78,7 @@ public class VoiceRecognitionService {
         }
 
         public void onPartialResults(Bundle partialResults) {
-            Log.d(TAG, "partial results");
+            Log.d(TAG, partialResults.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION).toString());
         }
 
         public void onReadyForSpeech(Bundle params) {
@@ -88,11 +91,11 @@ public class VoiceRecognitionService {
             if (results != null) {
                 matches = results.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION);
                 if (matches != null) {
-                    textView.setText(matches.get(0));
+                    result = matches.get(0);
+                    textView.setText(result);
                     Log.d(TAG, matches.toString());
                     speechRecognizer.stopListening();
                 }
-
             }
         }
 
@@ -109,4 +112,7 @@ public class VoiceRecognitionService {
         }
     }
 
+    public String getResult () {
+        return result;
+    }
 }
