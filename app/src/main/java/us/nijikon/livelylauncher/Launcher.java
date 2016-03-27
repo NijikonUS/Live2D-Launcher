@@ -20,15 +20,11 @@ import java.util.ArrayList;
 
 public class Launcher extends Activity {
     private static final int MY_PERMISSIONS_REQUEST_RECORD_AUDIO = 1;
-    private static final String TAG = Launcher.class.getName();
 
-    TextView textView;
+    private VoiceRecognitionService voiceRecognitionService;
 
-    SpeechRecognizer speechRecognizer;
+    private TextView textView;
 
-    SpeechListener speechLitsener;
-
-    Intent speechIntent;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,78 +34,9 @@ public class Launcher extends Activity {
     }
 
     @Override
-    public void onRequestPermissionsResult(int requestCode,
-                                           String permissions[], int[] grantResults) {
-        switch (requestCode) {
-            case MY_PERMISSIONS_REQUEST_RECORD_AUDIO: {
-                // If request is cancelled, the result arrays are empty.
-                if (grantResults.length > 0
-                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-
-                    // permission was granted, yay! Do the
-                    // contacts-related task you need to do.
-
-                } else {
-
-                    // permission denied, boo! Disable the
-                    // functionality that depends on this permission.
-                }
-                return;
-            }
-
-            // other 'case' lines to check for other
-            // permissions this app might request
-        }
-    }
-
-    @Override
     protected void onStart () {
 
-
-
-        if (ContextCompat.checkSelfPermission(this,
-                Manifest.permission.READ_CONTACTS)
-                != PackageManager.PERMISSION_GRANTED) {
-
-            // Should we show an explanation?
-            if (ActivityCompat.shouldShowRequestPermissionRationale(this,
-                    Manifest.permission.READ_CONTACTS)) {
-
-                // Show an expanation to the user *asynchronously* -- don't block
-                // this thread waiting for the user's response! After the user
-                // sees the explanation, try again to request the permission.
-
-            } else {
-
-                // No explanation needed, we can request the permission.
-
-                ActivityCompat.requestPermissions(this,
-                        new String[]{Manifest.permission.RECORD_AUDIO},
-                        MY_PERMISSIONS_REQUEST_RECORD_AUDIO);
-
-                // MY_PERMISSIONS_REQUEST_READ_CONTACTS is an
-                // app-defined int constant. The callback method gets the
-                // result of the request.
-            }
-        }
-
-        speechRecognizer = SpeechRecognizer.createSpeechRecognizer(this);
-        speechLitsener = new SpeechListener();
-        speechRecognizer.setRecognitionListener(speechLitsener);
-        speechIntent = new Intent();
-
-        speechIntent.putExtra(RecognizerIntent.EXTRA_CALLING_PACKAGE,"us.nijikon.livelylauncher");
-
-        // Given an hint to the recognizer about what the user is going to say
-        speechIntent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL,
-                RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
-
-        // Specify how many results you want to receive. The results will be sorted
-        // where the first result is the one with higher confidence.
-        speechIntent.putExtra(RecognizerIntent.EXTRA_MAX_RESULTS, 20);
-
-
-        speechIntent.putExtra(RecognizerIntent.EXTRA_PARTIAL_RESULTS, true);
+        voiceRecognitionService = new VoiceRecognitionService(this);
 
         super.onStart();
     }
@@ -120,12 +47,12 @@ public class Launcher extends Activity {
         if (!SpeechRecognizer.isRecognitionAvailable(this)) {
         }
         else {
-            speechRecognizer.startListening(speechIntent);
+            voiceRecognitionService.startListening();
         }
     }
 
     public void endSpeaking (View view) {
-        speechRecognizer.stopListening();
+        voiceRecognitionService.stopListening();
     }
 
     @Override
@@ -150,53 +77,10 @@ public class Launcher extends Activity {
         return super.onOptionsItemSelected(item);
     }
 
-    class SpeechListener implements RecognitionListener {
-        public void onBufferReceived(byte[] buffer) {
-            Log.d(TAG, "buffer recieved ");
-        }
-        public void onError(int error) {
-            //if critical error then exit
-            if(error == SpeechRecognizer.ERROR_CLIENT || error == SpeechRecognizer.ERROR_INSUFFICIENT_PERMISSIONS){
-                Log.d(TAG, "client error");
-            }
-            //else ask to repeats
-            else{
-                Log.d(TAG, "other error");
-            }
-        }
-        public void onEvent(int eventType, Bundle params) {
-            Log.d(TAG, "onEvent");
-        }
-        public void onPartialResults(Bundle partialResults) {
-            Log.d(TAG, "partial results");
-        }
-        public void onReadyForSpeech(Bundle params) {
-            Log.d(TAG, "on ready for speech");
-        }
-        public void onResults(Bundle results) {
-            Log.d(TAG, "on results");
-            ArrayList<String> matches = null;
-            if (results != null) {
-                matches = results.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION);
-                if (matches != null) {
-                    textView.setText(matches.get(0));
-                    Log.d(TAG, matches.toString());
-                    speechRecognizer.stopListening();
-                }
-
-            }
-        }
-        public void onRmsChanged(float rmsdB) {
-            //			Log.d(TAG, "rms changed");
-        }
-        public void onBeginningOfSpeech() {
-            Log.d(TAG, "speach begining");
-        }
-        public void onEndOfSpeech() {
-            Log.d(TAG, "speach done");
-        }
-
+    public TextView getTextView () {
+        return textView;
     }
+
 }
 
 

@@ -4,5 +4,6 @@
     <string name="hello_world">Hello world!</string>
     <string name="action_settings">Settings</string>
 
-    <string name="button_begin_speaking">Begin Speaking</string>
+    <string name="button_start_speaking">Start Speaking</string>
+    <string name="button_stop_speaking">Stop Speaking</string>
 </resources>

@@ -9,20 +9,22 @@
 
     <TextView
         android:id="@+id/textview_display_result"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
+        android:layout_width="200dp"
+        android:layout_height="100dp"
+        android:textSize="20sp"
+        android:gravity="center"/>
 
     <Button
         android:layout_width="200dp"
         android:layout_height="wrap_content"
-        android:text="@string/button_begin_speaking"
+        android:text="@string/button_start_speaking"
         android:onClick="beginSpeaking"/>
 
 
     <Button
         android:layout_width="200dp"
         android:layout_height="wrap_content"
-        android:text="@string/button_begin_speaking"
+        android:text="@string/button_stop_speaking"
         android:onClick="endSpeaking"/>
 
 
