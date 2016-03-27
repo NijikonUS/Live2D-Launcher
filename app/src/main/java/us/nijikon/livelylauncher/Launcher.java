@@ -26,6 +26,8 @@ public class Launcher extends Activity {
 
     SpeechRecognizer speechRecognizer;
 
+    SpeechListener speechLitsener;
+
     Intent speechIntent;
 
     @Override
@@ -89,7 +91,7 @@ public class Launcher extends Activity {
         }
 
         speechRecognizer = SpeechRecognizer.createSpeechRecognizer(this);
-        SpeechListener speechLitsener = new SpeechListener();
+        speechLitsener = new SpeechListener();
         speechRecognizer.setRecognitionListener(speechLitsener);
         speechIntent = new Intent();
 
@@ -110,7 +112,18 @@ public class Launcher extends Activity {
     }
 
     public void beginSpeaking (View view) {
-        speechRecognizer.startListening(speechIntent);
+
+        //Check if this device supports Voice Recognition Service
+        if (!SpeechRecognizer.isRecognitionAvailable(this)) {
+
+        }
+        else {
+            speechRecognizer.startListening(speechIntent);
+        }
+    }
+
+    public void endSpeaking (View view) {
+        speechRecognizer.stopListening();
     }
 
     @Override
