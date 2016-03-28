@@ -8,6 +8,7 @@ import android.view.View;
 import android.widget.AbsListView;
 import android.widget.Adapter;
 import android.widget.AdapterView;
+import android.widget.Button;
 import android.widget.ListView;
 import android.widget.SimpleCursorAdapter;
 import android.widget.Toast;
@@ -15,6 +16,7 @@ import android.widget.Toast;
 public class ContactActivity extends Activity {
 
     private ListView lstv;
+    private Button btn;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -27,6 +29,7 @@ public class ContactActivity extends Activity {
         int[] to = {android.R.id.text1, android.R.id.text2};
         SimpleCursorAdapter adapter = new SimpleCursorAdapter(this, android.R.layout.simple_list_item_multiple_choice, c, from, to);
         lstv = (ListView) findViewById(R.id.listView);
+        btn = (Button) findViewById(R.id.button);
         lstv.setAdapter(adapter);
 
         lstv.setTextFilterEnabled(true);
@@ -38,6 +41,13 @@ public class ContactActivity extends Activity {
                 Adapter selAdapter = parent.getAdapter();
                 Object selected = selAdapter.getItem(position);
                 Toast.makeText(getApplicationContext(), selected.toString(), Toast.LENGTH_LONG).show();
+            }
+        });
+
+        btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
             }
         });
 

@@ -20,7 +20,7 @@
 
     <ImageView
         android:layout_width="130dp"
-        android:layout_height="110dp"
+        android:layout_height="80dp"
         android:background="@drawable/clock"
         android:id="@+id/imageView"
         android:layout_weight="0.16"

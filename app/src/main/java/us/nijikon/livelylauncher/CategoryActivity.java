@@ -21,6 +21,7 @@ public class CategoryActivity extends Activity {
 
         mRecyclerView = (RecyclerView) findViewById(R.id.rv);
         mRecyclerView.setHasFixedSize(true);
+        mRecyclerView.getBackground().setAlpha(130);
 
         mLayoutManager = new LinearLayoutManager(this);
         mRecyclerView.setLayoutManager(mLayoutManager);
