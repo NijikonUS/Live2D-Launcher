@@ -1,5 +1,6 @@
 package us.nijikon.livelylauncher;
 
+import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.app.Activity;
@@ -47,7 +48,8 @@ public class ContactActivity extends Activity {
         btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                Intent intent = new Intent(v.getContext(),RemindActivity.class);
+                v.getContext().startActivity(intent);
             }
         });
 
