@@ -1,4 +1,4 @@
-package us.nijikon.livelylauncher;
+package us.nijikon.livelylauncher.assistant;
 
 import android.content.Intent;
 import android.database.Cursor;
@@ -13,6 +13,8 @@ import android.widget.Button;
 import android.widget.ListView;
 import android.widget.SimpleCursorAdapter;
 import android.widget.Toast;
+
+import us.nijikon.livelylauncher.R;
 
 public class ContactActivity extends Activity {
 

@@ -1,6 +1,5 @@
-package us.nijikon.livelylauncher;
+package us.nijikon.livelylauncher.assistant;
 
-import android.app.Activity;
 import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.app.DialogFragment;
@@ -21,6 +20,8 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Locale;
 
+import us.nijikon.livelylauncher.R;
+
 public class Launcher extends FragmentActivity {
 
     TextView txv;
@@ -28,7 +29,7 @@ public class Launcher extends FragmentActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_launcher);
+        setContentView(R.layout.activity_time);
         txv = (TextView) findViewById(R.id.txv);
         Button btn1 = (Button) findViewById(R.id.btn1);
         Button btn2 = (Button) findViewById(R.id.btn2);

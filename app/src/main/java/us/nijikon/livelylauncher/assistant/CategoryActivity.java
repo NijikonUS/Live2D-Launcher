@@ -1,10 +1,12 @@
-package us.nijikon.livelylauncher;
+package us.nijikon.livelylauncher.assistant;
 
 import android.app.Activity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
+
+import us.nijikon.livelylauncher.R;
+import us.nijikon.livelylauncher.adapters.CategoryAdapter;
 
 public class CategoryActivity extends Activity {
 
@@ -25,7 +27,7 @@ public class CategoryActivity extends Activity {
 
         mLayoutManager = new LinearLayoutManager(this);
         mRecyclerView.setLayoutManager(mLayoutManager);
-        mAdapter = new MyAdapter(category);
+        mAdapter = new CategoryAdapter(category);
 
         mRecyclerView.setAdapter(mAdapter);
 

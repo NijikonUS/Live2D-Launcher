@@ -10,7 +10,7 @@
     android:background="@drawable/bkg3"
     android:orientation="vertical"
     android:id="@+id/linear"
-    tools:context="us.nijikon.livelylauncher.RemindActivity">
+    tools:context=".assistant.RemindActivity">
 
     <LinearLayout
         android:orientation="horizontal"

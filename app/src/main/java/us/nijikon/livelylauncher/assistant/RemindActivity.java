@@ -1,8 +1,10 @@
-package us.nijikon.livelylauncher;
+package us.nijikon.livelylauncher.assistant;
 
 import android.app.Activity;
 import android.os.Bundle;
 import android.widget.LinearLayout;
+
+import us.nijikon.livelylauncher.R;
 
 public class RemindActivity extends Activity {
 
