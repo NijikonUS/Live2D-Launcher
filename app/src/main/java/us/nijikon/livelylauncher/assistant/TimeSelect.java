@@ -22,7 +22,7 @@ import java.util.Locale;
 
 import us.nijikon.livelylauncher.R;
 
-public class Launcher extends FragmentActivity {
+public class TimeSelect extends FragmentActivity {
 
     TextView txv;
 

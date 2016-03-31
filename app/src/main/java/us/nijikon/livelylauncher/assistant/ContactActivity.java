@@ -1,10 +1,14 @@
 package us.nijikon.livelylauncher.assistant;
 
+import android.Manifest;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.app.Activity;
 import android.provider.ContactsContract;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.view.View;
 import android.widget.AbsListView;
 import android.widget.Adapter;
@@ -20,6 +24,10 @@ public class ContactActivity extends Activity {
 
     private ListView lstv;
     private Button btn;
+    private static final int MY_PERMISSIONS_REQUEST_READ_CONTACTS = 2;
+
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

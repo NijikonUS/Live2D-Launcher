@@ -5,8 +5,8 @@
     <uses-permission android:name="android.permission.RECORD_AUDIO" />
     <uses-permission android:name="android.permission.INTERNET"/>
     <uses-permission android:name="android.permission.GET_ACCOUNTS"/>
-    <uses-permission android:name="ANDROID.PERMISSION.READ_CONTACTS"/>
-    <uses-permission android:name="ANDROID.PERMISSION.WRITE_CONTACTS"/>
+    <uses-permission android:name="android.permission.READ_CONTACTS"/>
+    <uses-permission android:name="android.permission.WRITE_CONTACTS"/>
 
     <application
         android:allowBackup="true"
@@ -27,7 +27,19 @@
             </intent-filter>
         </activity>
         <activity android:name=".VoiceRecognitionActivity"
-            android:label="VoiceRecognitionActivity">
+        android:label="VoiceRecognitionActivity">
+    </activity>
+        <activity android:name=".assistant.TimeSelect"
+            android:label="TimeSelect">
+        </activity>
+        <activity android:name=".assistant.CategoryActivity"
+            android:label="CategoryActivity">
+        </activity>
+        <activity android:name=".assistant.ContactActivity"
+            android:label="ContactActivity">
+        </activity>
+        <activity android:name=".assistant.RemindActivity"
+            android:label="RemindActivity">
 
         </activity>
     </application>

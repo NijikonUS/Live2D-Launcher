@@ -1,11 +1,15 @@
 package us.nijikon.livelylauncher.launcher;
 
+import android.Manifest;
 import android.app.Activity;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewPropertyAnimatorCompat;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -22,14 +26,18 @@ import jp.live2d.android.Live2DModelAndroid;
 import jp.live2d.utils.android.FileManager;
 import us.nijikon.livelylauncher.R;
 import us.nijikon.livelylauncher.VoiceRecognitionActivity;
+import us.nijikon.livelylauncher.assistant.TimeSelect;
 import us.nijikon.livelylauncher.live2dHelpers.LAppLive2DManager;
 import us.nijikon.livelylauncher.live2dHelpers.LAppView;
 
 public class Launcher extends Activity {
+
+
     private LAppLive2DManager live2DMgr;
     private FragmentManager fragmentManager;
     private ImageButton appButton;
     private AppFragment appFragment;
+
 
 
     public Launcher(){
@@ -37,6 +45,7 @@ public class Launcher extends Activity {
         live2DMgr = new LAppLive2DManager();
         appFragment = new AppFragment();
     }
+
 
 
     @Override
@@ -71,6 +80,14 @@ public class Launcher extends Activity {
             @Override
             public void onClick(View v) {
                 startActivity(i);
+            }
+        });
+        ImageButton testbutton2 = (ImageButton) findViewById(R.id.testbutton2);
+        final Intent ii = new Intent(this, TimeSelect.class);
+        testbutton2.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(ii);
             }
         });
 

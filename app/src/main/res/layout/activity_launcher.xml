@@ -19,11 +19,20 @@
         android:layout_width="60dp"
         android:layout_height="60dp" />
     <ImageButton
+        android:background="@color/transparent"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/testbutton"
         android:src="@android:drawable/sym_def_app_icon"
         android:layout_alignParentTop="true"
+        android:layout_alignParentRight="true"/>
+    <ImageButton
+        android:background="@color/transparent"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/testbutton2"
+        android:src="@android:drawable/sym_def_app_icon"
+        android:layout_marginTop="80dp"
         android:layout_alignParentRight="true"/>
 
 </RelativeLayout>
