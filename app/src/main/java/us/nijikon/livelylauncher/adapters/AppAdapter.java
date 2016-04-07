@@ -85,7 +85,7 @@ public class AppAdapter extends RecyclerView.Adapter<AppAdapter.AppViewHolder> {
             @Override
             public void onClick(View v) {
                 //callback
-                listener.onItemClick(data ,v, i);
+                listener.onItemClick(app ,v, i);
             }
         });
 
@@ -95,7 +95,7 @@ public class AppAdapter extends RecyclerView.Adapter<AppAdapter.AppViewHolder> {
     public int getItemCount() {
       //  Log.d(tag, String.valueOf(data.size()));
         if(data!=null)
-        return data.size();
+            return data.size();
         return 0;
     }
 

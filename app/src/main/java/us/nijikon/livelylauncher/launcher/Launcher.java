@@ -165,6 +165,7 @@ public class Launcher extends Activity implements LoaderManager.LoaderCallbacks<
     @Override
     public void onLoadFinished(Loader<AppDataHolder> loader, AppDataHolder data) {
         appFragment.setAppAdapterDate(data.getData());
+        appFragment.setTop4AdapterData(data.getTop4());
     }
 
     @Override

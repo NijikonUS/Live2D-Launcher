@@ -8,10 +8,14 @@ import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.util.Log;
 
+import java.text.Collator;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Locale;
 import java.util.Set;
 
 import us.nijikon.livelylauncher.R;
@@ -27,9 +31,18 @@ public class AppDataHolder {
 
     public static final String tag = "AppDataHolder";
     private static final String IF_WRITTEN = "IF_WRITTEN";
+    private static final Comparator APP_SORT_BY_ALPHABET = new ChineseComparator();
 
     private static class Singleton{
         private static final AppDataHolder Instance = new AppDataHolder();
+    }
+
+    private static class ChineseComparator implements Comparator<AppModel> {
+        @Override
+        public int compare(AppModel lhs, AppModel rhs) {
+            return Collator.getInstance(Locale.CHINA).compare(lhs.getAppName(),rhs.getAppName());
+
+        }
     }
 
     /*
@@ -43,7 +56,6 @@ public class AppDataHolder {
 
     private AppDataHolder(){
     }
-
 
 
     /**
@@ -79,9 +91,9 @@ public class AppDataHolder {
                 e.printStackTrace();
                 continue;
             }
-            apps.add(new AppModel((String)info.loadLabel(packageManager),info.loadIcon(packageManager),key,times));
+            apps.add(new AppModel((String) info.loadLabel(packageManager), info.loadIcon(packageManager), key, times));
         }
-        data = apps;
+        setData(apps);
         Log.d("LOAD FROM FILE", String.valueOf(data.size()));
         return true;
     }
@@ -99,6 +111,7 @@ public class AppDataHolder {
             editor.putInt(app.getPackageName() /*+ "::" + app.getAppName()*/, app.getClickTimes());
         }
         editor.apply();
+        Log.d("WRITE FILE"," done");
     }
 
     /**
@@ -119,7 +132,7 @@ public class AppDataHolder {
             apps.put(appInfoList.get(i).activityInfo.packageName, new AppModel((String) appInfoList.get(i).loadLabel(packageManager), appInfoList.get(i).loadIcon(packageManager), appInfoList.get(i).activityInfo.packageName));
         }
         Log.d("FIRST LOAD TOTAL",String.valueOf(apps.size()));
-        data = new ArrayList<>(apps.values());
+        setData(new ArrayList<>(apps.values()));
         return true;
     }
 
@@ -127,4 +140,30 @@ public class AppDataHolder {
         return this.data;
     }
 
+    private void setData(List<AppModel> data){
+        Collections.sort(data, APP_SORT_BY_ALPHABET);
+        this.data = data;
+    }
+
+    public AppModel[] getTop4(){
+        if(data == null) return null;
+        AppModel[] top4 = new AppModel[4];
+        //init top4
+        for(int i =0 ;i< 4;i++){
+            top4[i] = data.get(i);
+        }
+
+        for(int i = 4;i<data.size();i++){
+            int place = 4;
+            for(int j = 3;j > -1;j--){
+                if(data.get(i).getClickTimes() > top4[j].getClickTimes()){
+                    place--;
+                }
+            }
+            if(place < 4){
+                top4[place] = data.get(i);
+            }
+        }
+        return top4;
+    }
 }

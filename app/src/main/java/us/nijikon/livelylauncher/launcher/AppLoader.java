@@ -33,6 +33,8 @@ public class AppLoader extends AsyncTaskLoader<AppDataHolder> {
 
     }
 
+
+
     @Override
     public AppDataHolder loadInBackground() {
         data = AppDataHolder.getInstance();

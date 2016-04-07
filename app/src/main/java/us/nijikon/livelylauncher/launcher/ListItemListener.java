@@ -15,5 +15,5 @@ public interface ListItemListener {
      *  callback for onClick event in list item
      *  help to manager behavior in controller
      */
-    void onItemClick(List<AppModel> data,View view,int position);
+    void onItemClick(AppModel data,View view,int position);
 }
