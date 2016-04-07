@@ -4,18 +4,24 @@ import android.Manifest;
 import android.app.Activity;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
+import android.app.LoaderManager;
+import android.appwidget.AppWidgetManager;
 import android.content.Context;
 import android.content.Intent;
+import android.content.Loader;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewPropertyAnimatorCompat;
+import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewAnimationUtils;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
@@ -26,11 +32,12 @@ import jp.live2d.android.Live2DModelAndroid;
 import jp.live2d.utils.android.FileManager;
 import us.nijikon.livelylauncher.R;
 import us.nijikon.livelylauncher.VoiceRecognitionActivity;
+import us.nijikon.livelylauncher.adapters.AppAdapter;
 import us.nijikon.livelylauncher.assistant.TimeSelect;
 import us.nijikon.livelylauncher.live2dHelpers.LAppLive2DManager;
 import us.nijikon.livelylauncher.live2dHelpers.LAppView;
 
-public class Launcher extends Activity {
+public class Launcher extends Activity implements LoaderManager.LoaderCallbacks<AppDataHolder>{
 
 
     private LAppLive2DManager live2DMgr;
@@ -38,12 +45,25 @@ public class Launcher extends Activity {
     private ImageButton appButton;
     private AppFragment appFragment;
 
+    private   int usableHeight;
+    private   int usableWidth;
+
 
 
     public Launcher(){
  //       instance = this;
         live2DMgr = new LAppLive2DManager();
         appFragment = new AppFragment();
+        appFragment.setParent(this);
+
+
+    }
+
+    public int getUsableHeight(){
+        return usableHeight;
+    }
+    public int getUsableWidth(){
+        return usableWidth;
     }
 
 
@@ -52,6 +72,17 @@ public class Launcher extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_launcher);
+        getWindow().addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION);
+
+        //setup screen size used for fragment
+
+        usableWidth = getResources().getDisplayMetrics().widthPixels;
+        usableHeight = getResources().getDisplayMetrics().heightPixels;
+
+        //load data
+        getLoaderManager().initLoader(0,null,this);
+
+
         fragmentManager = getFragmentManager();
         appButton = (ImageButton)findViewById(R.id.appButton);
         appButton.setEnabled(true);
@@ -123,5 +154,21 @@ public class Launcher extends Activity {
         fragmentManager.popBackStack(AppFragment.tag,FragmentManager.POP_BACK_STACK_INCLUSIVE);
         live2DMgr.onPause() ;
         super.onPause();
+    }
+
+    //loader
+    @Override
+    public Loader<AppDataHolder> onCreateLoader(int id, Bundle args) {
+        return new AppLoader(this);
+    }
+
+    @Override
+    public void onLoadFinished(Loader<AppDataHolder> loader, AppDataHolder data) {
+        appFragment.setAppAdapterDate(data.getData());
+    }
+
+    @Override
+    public void onLoaderReset(Loader<AppDataHolder> loader) {
+        loader = null;
     }
 }

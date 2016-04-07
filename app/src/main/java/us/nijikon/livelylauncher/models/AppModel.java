@@ -15,25 +15,33 @@ public class AppModel {
     public static final String tag = "AppModel";
 
 
-    private final Context context;
+
     private String appName;
     private Drawable appIcon;
     private String packageName;
+    private int clickTimes;
+  //  private final String sourceDir;
 
-    private final String sourceDir;
-
-    public AppModel(Context context, String appName, Drawable appIcon, String packageName, String sourceDir) {
-        this.context = context;
+    public AppModel(String appName, Drawable appIcon, String packageName) {
         this.appName =appName;
         this.appIcon = appIcon;
         this.packageName = packageName;
-        this.sourceDir =sourceDir;
+        clickTimes = 1;
+  //      this.sourceDir =sourceDir;
+    }
+
+    public AppModel(String appName, Drawable appIcon, String packageName,int clickTimes) {
+        this.appName =appName;
+        this.appIcon = appIcon;
+        this.packageName = packageName;
+        this.clickTimes = clickTimes;
+        //      this.sourceDir =sourceDir;
     }
 
 
-    public String getSourceDir() {
-        return sourceDir;
-    }
+   // public String getSourceDir() {
+   //     return sourceDir;
+   //}
 
     public Drawable getAppIcon() {
         return appIcon;
@@ -43,13 +51,15 @@ public class AppModel {
         return appName;
     }
 
-    public Context getContext() {
-        return context;
-    }
-
-
-
     public String getPackageName() {
         return packageName;
+    }
+
+    public int getClickTimes() {
+        return clickTimes;
+    }
+
+    public void increaceClickTime(){
+        this.clickTimes += 1;
     }
 }
