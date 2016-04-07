@@ -1,17 +1,29 @@
 package us.nijikon.livelylauncher.adapters;
 
+import android.content.Context;
+import android.content.Intent;
+import android.content.SharedPreferences;
+import android.content.pm.ApplicationInfo;
+import android.content.pm.PackageManager;
+import android.content.pm.ResolveInfo;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Set;
 
 import us.nijikon.livelylauncher.R;
+import us.nijikon.livelylauncher.launcher.AppLoader;
 import us.nijikon.livelylauncher.launcher.ListItemListener;
 import us.nijikon.livelylauncher.models.AppModel;
 
@@ -20,7 +32,8 @@ import us.nijikon.livelylauncher.models.AppModel;
  */
 public class AppAdapter extends RecyclerView.Adapter<AppAdapter.AppViewHolder> {
 
-    public static final String TAG = "AppAdapter";
+    public static final String tag = "AppAdapter";
+
 
     public static class AppViewHolder extends RecyclerView.ViewHolder{
         private CardView cardView;
@@ -34,17 +47,27 @@ public class AppAdapter extends RecyclerView.Adapter<AppAdapter.AppViewHolder> {
         }
     }
 
-    private ArrayList<AppModel> data;
-    private final ListItemListener listener;
+    private List<AppModel> data;
+    private ListItemListener listener;
 
+    public AppAdapter(){}
 
     public AppAdapter(ArrayList<AppModel> apps, ListItemListener listener){
         this.data = apps;
         this.listener = listener;
     }
 
-    public void setData(ArrayList<AppModel> data){
+    public AppAdapter(ListItemListener listener){
+        this.listener = listener;
+    }
+
+    public void setListener(ListItemListener listener){
+        this.listener = listener;
+    }
+
+    public void setData(List<AppModel> data){
         this.data = data;
+        notifyDataSetChanged();
     }
 
     @Override
@@ -57,10 +80,12 @@ public class AppAdapter extends RecyclerView.Adapter<AppAdapter.AppViewHolder> {
         final AppModel app = data.get(i);
         appViewHolder.appName.setText(app.getAppName());
         appViewHolder.appIcon.setImageDrawable(app.getAppIcon());
+      //  appViewHolder.cardView.onTouchEvent(new MotionEvent(){})
         appViewHolder.cardView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                listener.onItemClick(v,i);
+                //callback
+                listener.onItemClick(data ,v, i);
             }
         });
 
@@ -68,9 +93,13 @@ public class AppAdapter extends RecyclerView.Adapter<AppAdapter.AppViewHolder> {
 
     @Override
     public int getItemCount() {
-        Log.d(TAG,String.valueOf(data.size()));
+      //  Log.d(tag, String.valueOf(data.size()));
+        if(data!=null)
         return data.size();
+        return 0;
     }
+
+
 
 
 

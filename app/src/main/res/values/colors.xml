@@ -2,7 +2,6 @@
 <resources>
     <color name = "primaryBack" >#8037474F</color>
     <color name = "divideLine">#65FFFFFF</color>
-
     <color name = "primaryText" >#FFFFFF</color>
     <color name = "secondaryText">#54FFFFFF</color>
     <color name = "transparent">#00000000</color>

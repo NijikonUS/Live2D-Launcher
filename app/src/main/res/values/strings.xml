@@ -1,7 +1,10 @@
 <resources>
     <string name="app_name">LivelyLauncher</string>
-
     <string name="hello_world">Hello world!</string>
     <string name="action_settings">Settings</string>
     <string name="search">Search Apps...</string>
+    <string name="button_start_speaking">Start Speaking</string>
+    <string name="button_stop_speaking">Stop Speaking</string>
+    <string name="title_activity_contact">ContactActivity</string>
+
 </resources>
