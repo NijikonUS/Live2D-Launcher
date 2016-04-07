@@ -12,8 +12,9 @@
         android:layout_width="match_parent">
         <ImageView
             android:layout_margin="10dp"
-            android:layout_width="50dp"
-            android:layout_height="50dp"
+            android:scaleType="fitCenter"
+            android:layout_width="45dp"
+            android:layout_height="45dp"
             android:id="@+id/appIcon"/>
         <TextView
             android:textColor="@color/primaryText"
