@@ -15,6 +15,7 @@ import android.os.Bundle;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.helper.ItemTouchHelper;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -40,7 +41,7 @@ import us.nijikon.livelylauncher.models.AppModel;
 /**
  * Created by bowang .
  */
-public class AppFragment extends Fragment implements  LoaderManager.LoaderCallbacks<List<AppModel>>{
+public class AppFragment extends Fragment implements LoaderManager.LoaderCallbacks<List<AppModel>>{
 
     static final String tag = "AppFragment";
 
@@ -53,6 +54,7 @@ public class AppFragment extends Fragment implements  LoaderManager.LoaderCallba
     private ImageButton searchButton;
     private Launcher launcher;
     private String target;
+    private ItemTouchHelper touchHelper;
 
 
 
@@ -91,6 +93,15 @@ public class AppFragment extends Fragment implements  LoaderManager.LoaderCallba
                 data.increaceClickTime();
                 startActivity(intent);
             }
+
+            @Override
+            public void onStartDrag(RecyclerView.ViewHolder viewHolder) {
+                if(viewHolder instanceof AppAdapter.AppViewHolder){
+                    touchHelper.startDrag(viewHolder);
+                }else{
+                    // do nothing
+                }
+            }
         };
         if(appAdapter == null){
             appAdapter = new AppAdapter(itemListener);
@@ -98,6 +109,8 @@ public class AppFragment extends Fragment implements  LoaderManager.LoaderCallba
         }
         this.appAdapter.setListener(itemListener);
         this.top4Adapter.setListener(itemListener);
+
+
 
     }
 
@@ -118,6 +131,11 @@ public class AppFragment extends Fragment implements  LoaderManager.LoaderCallba
 
         searchView = (SearchView)view.findViewById(R.id.searchView);
         searchButton = (ImageButton)view.findViewById(R.id.searchButton);
+
+        ItemTouchHelper.Callback callback = new ItemTouchCallBackHelper(appAdapter);
+        touchHelper = new ItemTouchHelper(callback);
+        touchHelper.attachToRecyclerView(appRecyclerView);
+
         //
         searchButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -184,6 +202,6 @@ public class AppFragment extends Fragment implements  LoaderManager.LoaderCallba
         loader = new AppSearchLoader(getActivity(),target);
     }
 
-
+    //Item swipe & dismiss
 
 }
