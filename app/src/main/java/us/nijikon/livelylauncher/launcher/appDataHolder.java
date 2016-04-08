@@ -6,6 +6,7 @@ import android.content.SharedPreferences;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
+import android.net.Uri;
 import android.util.Log;
 
 import java.text.Collator;
@@ -131,7 +132,7 @@ public class AppDataHolder {
         for(int i =0;i<appInfoList.size();i++){
             apps.put(appInfoList.get(i).activityInfo.packageName, new AppModel((String) appInfoList.get(i).loadLabel(packageManager), appInfoList.get(i).loadIcon(packageManager), appInfoList.get(i).activityInfo.packageName));
         }
-        Log.d("FIRST LOAD TOTAL",String.valueOf(apps.size()));
+        Log.d("FIRST LOAD TOTAL", String.valueOf(apps.size()));
         setData(new ArrayList<>(apps.values()));
         return true;
     }
@@ -165,5 +166,11 @@ public class AppDataHolder {
             }
         }
         return top4;
+    }
+
+    public boolean uninstall(int position, Context context){
+        Intent uninstall = new Intent(Intent.ACTION_DELETE, Uri.parse("package:"+data.get(position).getPackageName()));
+        context.startActivity(uninstall);
+        return true;
     }
 }

@@ -6,8 +6,10 @@ import android.content.SharedPreferences;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
+import android.support.v4.view.MotionEventCompat;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.helper.ItemTouchHelper;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -23,6 +25,7 @@ import java.util.List;
 import java.util.Set;
 
 import us.nijikon.livelylauncher.R;
+import us.nijikon.livelylauncher.launcher.AppDataHolder;
 import us.nijikon.livelylauncher.launcher.AppLoader;
 import us.nijikon.livelylauncher.launcher.ListItemListener;
 import us.nijikon.livelylauncher.models.AppModel;
@@ -30,10 +33,9 @@ import us.nijikon.livelylauncher.models.AppModel;
 /**
  * Created by bowang .
  */
-public class AppAdapter extends RecyclerView.Adapter<AppAdapter.AppViewHolder> {
+public class AppAdapter extends RecyclerView.Adapter<AppAdapter.AppViewHolder> implements ItemTouchHelperAdapter{
 
     public static final String tag = "AppAdapter";
-
 
     public static class AppViewHolder extends RecyclerView.ViewHolder{
         private CardView cardView;
@@ -44,6 +46,18 @@ public class AppAdapter extends RecyclerView.Adapter<AppAdapter.AppViewHolder> {
             cardView = (CardView)itemView.findViewById(R.id.appCard);
             appIcon = (ImageView)itemView.findViewById(R.id.appIcon);
             appName = (TextView)itemView.findViewById(R.id.appName);
+        }
+
+        public CardView getCardView() {
+            return cardView;
+        }
+
+        public ImageView getAppIcon() {
+            return appIcon;
+        }
+
+        public TextView getAppName() {
+            return appName;
         }
     }
 
@@ -85,7 +99,17 @@ public class AppAdapter extends RecyclerView.Adapter<AppAdapter.AppViewHolder> {
             @Override
             public void onClick(View v) {
                 //callback
-                listener.onItemClick(app ,v, i);
+                listener.onItemClick(app, v, i);
+            }
+        });
+        //drag event
+        appViewHolder.cardView.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                if (MotionEventCompat.getActionMasked(event) == MotionEvent.ACTION_DOWN) {
+                    listener.onStartDrag(appViewHolder);
+                }
+                return false;
             }
         });
 
@@ -98,9 +122,25 @@ public class AppAdapter extends RecyclerView.Adapter<AppAdapter.AppViewHolder> {
             return data.size();
         return 0;
     }
+    // ItemTouchHelperAdapter
+
+    @Override
+    public boolean onItemMove(int fromPosition, int toPosition) {
+        return false;
+    }
 
 
+    @Override
+    public void onItemDismiss(int position) {
+        data.remove(position);
+        notifyItemRemoved(position);
 
+    }
+
+   @Override
+    public void onRefresh(int position){
+       this.notifyItemChanged(position);
+   }
 
 
 }

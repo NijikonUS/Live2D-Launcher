@@ -17,7 +17,7 @@ import us.nijikon.livelylauncher.models.AppModel;
 /**
  * Created by bowang .
  */
-public class Top4Adapter extends RecyclerView.Adapter<Top4Adapter.AppViewHolder> {
+public class Top4Adapter extends RecyclerView.Adapter<Top4Adapter.AppViewHolder>{
 
     private AppModel[] top4;
 

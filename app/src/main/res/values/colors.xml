@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name = "primaryBack" >#8037474F</color>
+    <color name = "primaryBack" >#80000000</color>
     <color name = "divideLine">#65FFFFFF</color>
     <color name = "primaryText" >#FFFFFF</color>
     <color name = "secondaryText">#54FFFFFF</color>

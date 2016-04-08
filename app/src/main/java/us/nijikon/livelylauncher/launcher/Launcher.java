@@ -153,6 +153,7 @@ public class Launcher extends Activity implements LoaderManager.LoaderCallbacks<
     {
         fragmentManager.popBackStack(AppFragment.tag,FragmentManager.POP_BACK_STACK_INCLUSIVE);
         live2DMgr.onPause() ;
+        AppDataHolder.getInstance().writeToFile(this);
         super.onPause();
     }
 
@@ -172,4 +173,6 @@ public class Launcher extends Activity implements LoaderManager.LoaderCallbacks<
     public void onLoaderReset(Loader<AppDataHolder> loader) {
         loader = null;
     }
+
+
 }
