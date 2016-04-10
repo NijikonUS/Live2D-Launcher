@@ -2,17 +2,21 @@ package us.nijikon.livelylauncher.launcher;
 
 import android.Manifest;
 import android.app.Activity;
+import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.app.LoaderManager;
 import android.appwidget.AppWidgetManager;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.Loader;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.view.ViewPropertyAnimatorCompat;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -42,22 +46,70 @@ public class Launcher extends Activity implements LoaderManager.LoaderCallbacks<
 
     private LAppLive2DManager live2DMgr;
     private FragmentManager fragmentManager;
-    private ImageButton appButton;
+    //private ImageButton appButton;
     private AppFragment appFragment;
+    private LauncherFragment launcherFragment;
+    private Fragment currentFragment;
 
     private   int usableHeight;
     private   int usableWidth;
+
+    private BroadcastReceiver receiver;
 
 
 
     public Launcher(){
  //       instance = this;
         live2DMgr = new LAppLive2DManager();
-        appFragment = new AppFragment();
-        appFragment.setParent(this);
-
+        appFragment = new AppFragment().setParent(this);
+        launcherFragment = new LauncherFragment().setParent(this);
 
     }
+
+
+    public void goFragment(String tag){
+        if(currentFragment!=null){
+            if(currentFragment instanceof LauncherFragment ){
+                fragmentManager.beginTransaction()
+                        .setCustomAnimations(0, R.animator.fade_out)
+                        .detach(currentFragment)
+                        .commit();
+            }else if(  currentFragment instanceof AppFragment){
+                fragmentManager.popBackStack();
+                fragmentManager.beginTransaction()
+                        .setCustomAnimations(0, R.animator.left_out)
+                        .detach(currentFragment)
+                        .commit();
+            }
+        }
+
+            switch (tag) {
+                case LauncherFragment.tag:
+                    if (launcherFragment == null) {
+                        launcherFragment = new LauncherFragment().setParent(this);
+                        fragmentManager.beginTransaction().add(R.id.main, launcherFragment).commit();
+                    }
+                    fragmentManager.beginTransaction()
+                            .attach(launcherFragment)
+                            .show(launcherFragment)
+                            .commit();
+                    currentFragment = launcherFragment;
+                    break;
+                case AppFragment.tag:
+                    if (appFragment == null) {
+                        appFragment = new AppFragment().setParent(this);
+                        fragmentManager.beginTransaction().add(R.id.main, appFragment).commit();
+                    }
+                    fragmentManager.beginTransaction()
+                            .addToBackStack(AppFragment.tag)
+                            .setCustomAnimations(R.animator.left_in, 0, 0, R.animator.left_out)
+                            .attach(appFragment)
+                            .show(appFragment)
+                            .commit();
+                    currentFragment = appFragment;
+            }
+
+     }
 
     public int getUsableHeight(){
         return usableHeight;
@@ -84,22 +136,17 @@ public class Launcher extends Activity implements LoaderManager.LoaderCallbacks<
 
 
         fragmentManager = getFragmentManager();
-        appButton = (ImageButton)findViewById(R.id.appButton);
-        appButton.setEnabled(true);
-        appButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                // avoid multiple clicking
-                appButton.setEnabled(false);
-                appButton.setVisibility(View.INVISIBLE);
-                FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-                fragmentTransaction.add(R.id.main, appFragment);
-                fragmentTransaction.addToBackStack(AppFragment.tag);
-                fragmentTransaction.setCustomAnimations(R.animator.left_in,0).show(appFragment);
-                fragmentTransaction.commit();
 
+        receiver = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                Log.i("local Receiver","Gocha");
+                if(appFragment!=null) {
+                    appFragment.setAppAdapterDate(AppDataHolder.getInstance().getData());
+                }
             }
-        });
+        };
+       //LocalBroadcastManager.getInstance(this).registerReceiver(receiver, new IntentFilter("AAAAA"));
 
 
         /*
@@ -126,6 +173,16 @@ public class Launcher extends Activity implements LoaderManager.LoaderCallbacks<
 
         setupGUI();
         FileManager.init(this.getApplicationContext());
+
+        fragmentManager.beginTransaction().add(R.id.main,launcherFragment).add(R.id.main,appFragment).hide(appFragment).hide(launcherFragment).commit();
+    }
+
+    @Override
+    public void onResume(){
+        super.onResume();
+        Log.d("LAUCNHER ACTIVITY", "ON RESUME");
+        this.goFragment(LauncherFragment.tag);
+        registerReceiver(receiver, new IntentFilter(getResources().getString(R.string.update)));
     }
 
 
@@ -151,10 +208,18 @@ public class Launcher extends Activity implements LoaderManager.LoaderCallbacks<
     @Override
     protected void onPause()
     {
-        fragmentManager.popBackStack(AppFragment.tag,FragmentManager.POP_BACK_STACK_INCLUSIVE);
+        fragmentManager.popBackStack(AppFragment.tag, FragmentManager.POP_BACK_STACK_INCLUSIVE);
         live2DMgr.onPause() ;
         AppDataHolder.getInstance().writeToFile(this);
+        unregisterReceiver(receiver);
         super.onPause();
+    }
+
+    @Override
+    protected  void onStop(){
+        super.onStop();
+        //LocalBroadcastManager.getInstance(this).unregisterReceiver(receiver);
+
     }
 
     //loader

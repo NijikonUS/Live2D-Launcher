@@ -62,4 +62,8 @@ public class AppModel {
     public void increaceClickTime(){
         this.clickTimes += 1;
     }
+
+    public void setClickTime(int clickTimes){
+        this.clickTimes = clickTimes;
+    }
 }

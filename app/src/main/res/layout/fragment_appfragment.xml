@@ -52,7 +52,7 @@
  <RelativeLayout
      android:background="@color/transparent"
      android:layout_weight="1"
-
+     android:id="@+id/space"
      android:layout_width="0dp"
      android:layout_height="match_parent">
      <ImageButton

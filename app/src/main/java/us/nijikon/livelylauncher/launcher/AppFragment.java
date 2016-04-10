@@ -5,13 +5,16 @@ import android.app.Activity;
 import android.app.Fragment;
 import android.app.LoaderManager;
 import android.content.AsyncTaskLoader;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.Loader;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.os.Bundle;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -43,7 +46,7 @@ import us.nijikon.livelylauncher.models.AppModel;
  */
 public class AppFragment extends Fragment implements LoaderManager.LoaderCallbacks<List<AppModel>>{
 
-    static final String tag = "AppFragment";
+    public static final String tag = "AppFragment";
 
     private AppAdapter appAdapter;
     private Top4Adapter top4Adapter;
@@ -58,12 +61,13 @@ public class AppFragment extends Fragment implements LoaderManager.LoaderCallbac
 
 
 
-    public void setParent(Launcher launcher){
-       this.launcher = launcher;
+
+
+    public AppFragment setParent(Launcher launcher){
+        this.launcher = launcher;
+        return this;
    }
-    public void setAppAdapter(AppAdapter appAdapter){
-        this.appAdapter = appAdapter;
-    }
+
     public void setAppAdapterDate(List<AppModel> date){
        if(appAdapter!=null) {
            appAdapter.setData(date);
@@ -72,6 +76,7 @@ public class AppFragment extends Fragment implements LoaderManager.LoaderCallbac
            appAdapter.setData(date);
        }
     }
+
     public void setTop4AdapterData(AppModel[] data){
         if(top4Adapter!=null){
             top4Adapter.setTop4(data);
@@ -110,8 +115,6 @@ public class AppFragment extends Fragment implements LoaderManager.LoaderCallbac
         this.appAdapter.setListener(itemListener);
         this.top4Adapter.setListener(itemListener);
 
-
-
     }
 
     @Override
@@ -130,11 +133,14 @@ public class AppFragment extends Fragment implements LoaderManager.LoaderCallbac
         top4RecyclerView.setAdapter(top4Adapter);
 
         searchView = (SearchView)view.findViewById(R.id.searchView);
+        searchView.setQuery("",false);
         searchButton = (ImageButton)view.findViewById(R.id.searchButton);
 
         ItemTouchHelper.Callback callback = new ItemTouchCallBackHelper(appAdapter);
         touchHelper = new ItemTouchHelper(callback);
         touchHelper.attachToRecyclerView(appRecyclerView);
+
+        //
 
         //
         searchButton.setOnClickListener(new View.OnClickListener() {
@@ -147,7 +153,13 @@ public class AppFragment extends Fragment implements LoaderManager.LoaderCallbac
                 }
             }
         });
-        //
+
+        view.findViewById(R.id.space).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                launcher.goFragment(LauncherFragment.tag);
+            }
+        });
 
 
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
@@ -158,12 +170,14 @@ public class AppFragment extends Fragment implements LoaderManager.LoaderCallbac
 
             @Override
             public boolean onQueryTextChange(String newText) {
-                Log.d("TEXTCHANGE",newText);
+                Log.d("TEXTCHANGE", newText);
                 target = newText;
                 startSearchHelper();
                 return false;
             }
         });
+
+
 
         return view;
     }
@@ -175,14 +189,15 @@ public class AppFragment extends Fragment implements LoaderManager.LoaderCallbac
     @Override
     public void onResume(){
         super.onResume();
-        searchView.setQuery("",false);
-        setTop4AdapterData(AppDataHolder.getInstance().getTop4());
+        appAdapter.setData(AppDataHolder.getInstance().getData());
+        top4Adapter.setTop4(AppDataHolder.getInstance().getTop4());
     }
     @Override
     public void onPause(){
         super.onPause();
-        ((ImageButton)(getActivity().findViewById(R.id.appButton))).setEnabled(true);
-        ((ImageButton)(getActivity().findViewById(R.id.appButton))).setVisibility(View.VISIBLE);
+        Log.d(tag, "on pause");
+        launcher.getFragmentManager().popBackStack(tag, 0);
+        launcher.goFragment(LauncherFragment.tag);
     }
 
     //Search loader
@@ -201,7 +216,5 @@ public class AppFragment extends Fragment implements LoaderManager.LoaderCallbac
     public void onLoaderReset(Loader<List<AppModel>> loader) {
         loader = new AppSearchLoader(getActivity(),target);
     }
-
-    //Item swipe & dismiss
 
 }

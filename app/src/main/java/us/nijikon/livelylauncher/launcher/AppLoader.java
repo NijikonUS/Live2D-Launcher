@@ -33,13 +33,11 @@ public class AppLoader extends AsyncTaskLoader<AppDataHolder> {
 
     }
 
-
-
     @Override
     public AppDataHolder loadInBackground() {
         data = AppDataHolder.getInstance();
-        if(!data.loadFromFile(getContext())){
-            data.firstLoad(getContext());
+        if(!data.firstLoad(getContext())){
+            data.loadFromFile(getContext());
         }
         data.writeToFile(getContext());
         return data;

@@ -5,10 +5,12 @@ import android.app.Service;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.os.Vibrator;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.helper.ItemTouchHelper;
 
+import java.text.Collator;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import us.nijikon.livelylauncher.adapters.ItemTouchHelperAdapter;
@@ -82,22 +84,23 @@ public class ItemTouchCallBackHelper extends ItemTouchHelper.Callback {
     public void onSwiped(final RecyclerView.ViewHolder viewHolder, int direction) {
         shake(viewHolder.itemView.getContext());
         final int position = viewHolder.getAdapterPosition();
-        AppModel thisApp =  AppDataHolder.getInstance().getData().get(position);
-        new AlertDialog.Builder(viewHolder.itemView.getContext()).setIcon(thisApp.getAppIcon())
-                .setTitle(thisApp.getAppName()).setMessage("Do you want to uninstall this app?")
-                .setNegativeButton("CANCEL", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        mAdapter.onRefresh(position);
-                    }
-                }).setPositiveButton("OK", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                if (AppDataHolder.getInstance().uninstall(position,viewHolder.itemView.getContext())){
-                    mAdapter.onItemDismiss(position);
-                }
-            }
-        }).create().show();
+        AppDataHolder.getInstance().uninstall(position,viewHolder.itemView.getContext());
+//        AppModel thisApp =  AppDataHolder.getInstance().getData().get(position);
+//        new AlertDialog.Builder(viewHolder.itemView.getContext()).setIcon(thisApp.getAppIcon())
+//                .setTitle(thisApp.getAppName()).setMessage("Do you want to uninstall this app?")
+//                .setNegativeButton("CANCEL", new DialogInterface.OnClickListener() {
+//                    @Override
+//                    public void onClick(DialogInterface dialog, int which) {
+//                        mAdapter.onRefresh(position);
+//                    }
+//                }).setPositiveButton("OK", new DialogInterface.OnClickListener() {
+//            @Override
+//            public void onClick(DialogInterface dialog, int which) {
+//                if (AppDataHolder.getInstance().uninstall(position,viewHolder.itemView.getContext())){
+//                    mAdapter.onItemDismiss(position);
+//                }
+//            }
+//        }).create().show();
     }
 
     private void shake(Context context){

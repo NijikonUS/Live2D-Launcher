@@ -8,5 +8,5 @@
     <string name="title_activity_contact">ContactActivity</string>
     <string name="allApps">us.nijikon.livelyLauncher.All_APPS_SHARED_PREFERENCE</string>
     <string name="writeFileFlag">us.nijikon.livelyLauncher.APPS_WRITE_FLAG</string>
-
+    <string name="update">us.nijikon.livelyLauncher.UP_DATE</string>
 </resources>
