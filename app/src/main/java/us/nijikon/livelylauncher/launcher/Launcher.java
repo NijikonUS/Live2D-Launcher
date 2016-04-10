@@ -53,8 +53,8 @@ public class Launcher extends Activity implements LoaderManager.LoaderCallbacks<
 
     private   int usableHeight;
     private   int usableWidth;
-
     private BroadcastReceiver receiver;
+    private BroadcastReceiver speechReceiver;
 
 
 
@@ -68,18 +68,15 @@ public class Launcher extends Activity implements LoaderManager.LoaderCallbacks<
 
 
     public void goFragment(String tag){
+        FragmentTransaction transaction = fragmentManager.beginTransaction();
         if(currentFragment!=null){
             if(currentFragment instanceof LauncherFragment ){
-                fragmentManager.beginTransaction()
-                        .setCustomAnimations(0, R.animator.fade_out)
-                        .detach(currentFragment)
-                        .commit();
-            }else if(  currentFragment instanceof AppFragment){
+                transaction.setCustomAnimations(0, R.animator.fade_out)
+                        .detach(currentFragment);
+            }else if(currentFragment instanceof AppFragment){
                 fragmentManager.popBackStack();
-                fragmentManager.beginTransaction()
-                        .setCustomAnimations(0, R.animator.left_out)
-                        .detach(currentFragment)
-                        .commit();
+                transaction.setCustomAnimations(0, R.animator.left_out)
+                        .detach(currentFragment);
             }
         }
 
@@ -87,28 +84,24 @@ public class Launcher extends Activity implements LoaderManager.LoaderCallbacks<
                 case LauncherFragment.tag:
                     if (launcherFragment == null) {
                         launcherFragment = new LauncherFragment().setParent(this);
-                        fragmentManager.beginTransaction().add(R.id.main, launcherFragment).commit();
+                        transaction.add(R.id.main, launcherFragment);
                     }
-                    fragmentManager.beginTransaction()
-                            .attach(launcherFragment)
-                            .show(launcherFragment)
-                            .commit();
+                    transaction.attach(launcherFragment)
+                            .show(launcherFragment);
                     currentFragment = launcherFragment;
                     break;
                 case AppFragment.tag:
                     if (appFragment == null) {
                         appFragment = new AppFragment().setParent(this);
-                        fragmentManager.beginTransaction().add(R.id.main, appFragment).commit();
+                        transaction.add(R.id.main, appFragment);
                     }
-                    fragmentManager.beginTransaction()
-                            .addToBackStack(AppFragment.tag)
+                    transaction.addToBackStack(AppFragment.tag)
                             .setCustomAnimations(R.animator.left_in, 0, 0, R.animator.left_out)
                             .attach(appFragment)
-                            .show(appFragment)
-                            .commit();
+                            .show(appFragment);
                     currentFragment = appFragment;
             }
-
+        transaction.commit();
      }
 
     public int getUsableHeight(){
@@ -140,13 +133,21 @@ public class Launcher extends Activity implements LoaderManager.LoaderCallbacks<
         receiver = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
-                Log.i("local Receiver","Gocha");
+                Log.i("local Receiver","Gotcha");
                 if(appFragment!=null) {
                     appFragment.setAppAdapterDate(AppDataHolder.getInstance().getData());
                 }
             }
         };
-       //LocalBroadcastManager.getInstance(this).registerReceiver(receiver, new IntentFilter("AAAAA"));
+
+        speechReceiver = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                Log.i("Speeach Receiver","Gotcha");
+            }
+        };
+
+       LocalBroadcastManager.getInstance(this).registerReceiver(speechReceiver, new IntentFilter("AAAAA"));
 
 
         /*
@@ -157,7 +158,8 @@ public class Launcher extends Activity implements LoaderManager.LoaderCallbacks<
         testbutton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivity(i);
+//                startActivity(i);
+                LocalBroadcastManager.getInstance(v.getContext()).sendBroadcast(new Intent("AAAAA"));
             }
         });
         ImageButton testbutton2 = (ImageButton) findViewById(R.id.testbutton2);

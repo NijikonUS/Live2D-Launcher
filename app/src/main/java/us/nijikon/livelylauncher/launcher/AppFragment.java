@@ -189,6 +189,7 @@ public class AppFragment extends Fragment implements LoaderManager.LoaderCallbac
     @Override
     public void onResume(){
         super.onResume();
+        searchView.setQuery("",false);
         appAdapter.setData(AppDataHolder.getInstance().getData());
         top4Adapter.setTop4(AppDataHolder.getInstance().getTop4());
     }
