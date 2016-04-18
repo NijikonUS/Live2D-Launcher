@@ -14,10 +14,10 @@ public class LAppDefine
 
 	
 	
-//	public static final float VIEW_MAX_SCALE = 2f;
-//	public static final float VIEW_MIN_SCALE = 0.8f;
 	public static final float VIEW_MAX_SCALE = 1f;
 	public static final float VIEW_MIN_SCALE = 1f;
+//	public static final float VIEW_MAX_SCALE = 0.8f;
+//	public static final float VIEW_MIN_SCALE = 0.8f;
 
 	public static final float VIEW_LOGICAL_LEFT = -1;
 	public static final float VIEW_LOGICAL_RIGHT = 1;
@@ -30,28 +30,22 @@ public class LAppDefine
 	
 //	public static final String BACK_IMAGE_NAME = "image/back_class_normal.png" ;
 
-	
-//	public static final String MODEL_HARU		= "live2d/haru/haru.model.json";
-//	public static final String MODEL_HARU_A		= "live2d/haru/haru_01.model.json";
-//	public static final String MODEL_HARU_B		= "live2d/haru/haru_02.model.json";
-//	public static final String MODEL_SHIZUKU	= "live2d/shizuku/shizuku.model.json";
-//	public static final String MODEL_WANKO 		= "live2d/wanko/wanko.model.json";
 	public static final String MODEL_EPSILON    = "live2d/epsilon/Epsilon.model.json";
 
-	
-	static final String MOTION_GROUP_IDLE		="idle";
-//	static final String MOTION_GROUP_TAP_BODY	="tap_body";
-//	static final String MOTION_GROUP_FLICK_HEAD	="flick_head";
-//	static final String MOTION_GROUP_PINCH_IN	="pinch_in";
-//	static final String MOTION_GROUP_PINCH_OUT	="pinch_out";
-//	static final String MOTION_GROUP_SHAKE		="shake";
-	static final String MOTION_NULL             ="test";
-	
+
+	public static final String MOTION_GROUP_IDLE		="idle";
+	public static final String MOTION_NULL             ="test";
+	public static final String MOTION_POSITIVE         ="positive";
+	public static final String MOTION_NOD				="nodding";
+	public static final String MOTION_SAD    			="sad";
+	public static final String MOTION_ANGRY			="angry";
+	public static final String MOTION_HOMESCREEM		="homeScreenRandom";
+	public static final String MOTION_SHY           ="shy";
 	static final String HIT_AREA_HEAD		="head";
 	static final String HIT_AREA_BODY		="body";
 
-	
-	public static final int PRIORITY_NONE		= 0;
+
+
 	public static final int PRIORITY_IDLE		= 1;
 	public static final int PRIORITY_NORMAL		= 2;
 	public static final int PRIORITY_FORCE		= 3;

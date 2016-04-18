@@ -38,10 +38,11 @@ import us.nijikon.livelylauncher.R;
 import us.nijikon.livelylauncher.VoiceRecognitionActivity;
 import us.nijikon.livelylauncher.adapters.AppAdapter;
 import us.nijikon.livelylauncher.assistant.TimeSelect;
+import us.nijikon.livelylauncher.live2dHelpers.LAppDefine;
 import us.nijikon.livelylauncher.live2dHelpers.LAppLive2DManager;
 import us.nijikon.livelylauncher.live2dHelpers.LAppView;
 
-public class Launcher extends Activity implements LoaderManager.LoaderCallbacks<AppDataHolder>{
+public class Launcher extends Activity implements LoaderManager.LoaderCallbacks<AppDataHolder> {
 
 
     private LAppLive2DManager live2DMgr;
@@ -51,15 +52,14 @@ public class Launcher extends Activity implements LoaderManager.LoaderCallbacks<
     private LauncherFragment launcherFragment;
     private Fragment currentFragment;
 
-    private   int usableHeight;
-    private   int usableWidth;
+    private int usableHeight;
+    private int usableWidth;
     private BroadcastReceiver receiver;
     private BroadcastReceiver speechReceiver;
 
 
-
-    public Launcher(){
- //       instance = this;
+    public Launcher() {
+        //       instance = this;
         live2DMgr = new LAppLive2DManager();
         appFragment = new AppFragment().setParent(this);
         launcherFragment = new LauncherFragment().setParent(this);
@@ -67,50 +67,50 @@ public class Launcher extends Activity implements LoaderManager.LoaderCallbacks<
     }
 
 
-    public void goFragment(String tag){
+    public void goFragment(String tag) {
         FragmentTransaction transaction = fragmentManager.beginTransaction();
-        if(currentFragment!=null){
-            if(currentFragment instanceof LauncherFragment ){
+        if (currentFragment != null) {
+            if (currentFragment instanceof LauncherFragment) {
                 transaction.setCustomAnimations(0, R.animator.fade_out)
                         .detach(currentFragment);
-            }else if(currentFragment instanceof AppFragment){
+            } else if (currentFragment instanceof AppFragment) {
                 fragmentManager.popBackStack();
                 transaction.setCustomAnimations(0, R.animator.left_out)
                         .detach(currentFragment);
             }
         }
 
-            switch (tag) {
-                case LauncherFragment.tag:
-                    if (launcherFragment == null) {
-                        launcherFragment = new LauncherFragment().setParent(this);
-                        transaction.add(R.id.main, launcherFragment);
-                    }
-                    transaction.attach(launcherFragment)
-                            .show(launcherFragment);
-                    currentFragment = launcherFragment;
-                    break;
-                case AppFragment.tag:
-                    if (appFragment == null) {
-                        appFragment = new AppFragment().setParent(this);
-                        transaction.add(R.id.main, appFragment);
-                    }
-                    transaction.addToBackStack(AppFragment.tag)
-                            .setCustomAnimations(R.animator.left_in, 0, 0, R.animator.left_out)
-                            .attach(appFragment)
-                            .show(appFragment);
-                    currentFragment = appFragment;
-            }
+        switch (tag) {
+            case LauncherFragment.tag:
+                if (launcherFragment == null) {
+                    launcherFragment = new LauncherFragment().setParent(this);
+                    transaction.add(R.id.main, launcherFragment);
+                }
+                transaction.attach(launcherFragment)
+                        .show(launcherFragment);
+                currentFragment = launcherFragment;
+                break;
+            case AppFragment.tag:
+                if (appFragment == null) {
+                    appFragment = new AppFragment().setParent(this);
+                    transaction.add(R.id.main, appFragment);
+                }
+                transaction.addToBackStack(AppFragment.tag)
+                        .setCustomAnimations(R.animator.left_in, 0, 0, R.animator.left_out)
+                        .attach(appFragment)
+                        .show(appFragment);
+                currentFragment = appFragment;
+        }
         transaction.commit();
-     }
+    }
 
-    public int getUsableHeight(){
+    public int getUsableHeight() {
         return usableHeight;
     }
-    public int getUsableWidth(){
+
+    public int getUsableWidth() {
         return usableWidth;
     }
-
 
 
     @Override
@@ -125,7 +125,7 @@ public class Launcher extends Activity implements LoaderManager.LoaderCallbacks<
         usableHeight = getResources().getDisplayMetrics().heightPixels;
 
         //load data
-        getLoaderManager().initLoader(0,null,this);
+        getLoaderManager().initLoader(0, null, this);
 
 
         fragmentManager = getFragmentManager();
@@ -133,8 +133,8 @@ public class Launcher extends Activity implements LoaderManager.LoaderCallbacks<
         receiver = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
-                Log.i("local Receiver","Gotcha");
-                if(appFragment!=null) {
+                Log.i("local Receiver", "Gotcha");
+                if (appFragment != null) {
                     appFragment.setAppAdapterDate(AppDataHolder.getInstance().getData());
                 }
             }
@@ -143,23 +143,24 @@ public class Launcher extends Activity implements LoaderManager.LoaderCallbacks<
         speechReceiver = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
-                Log.i("Speeach Receiver","Gotcha");
+                Log.i("Speeach Receiver", "Gotcha");
             }
         };
 
-       LocalBroadcastManager.getInstance(this).registerReceiver(speechReceiver, new IntentFilter("AAAAA"));
+        LocalBroadcastManager.getInstance(this).registerReceiver(speechReceiver, new IntentFilter("AAAAA"));
 
 
         /*
          * testing for voice reg
          */
-        ImageButton testbutton = (ImageButton)findViewById(R.id.testbutton);
+        ImageButton testbutton = (ImageButton) findViewById(R.id.testbutton);
         final Intent i = new Intent(this, VoiceRecognitionActivity.class);
         testbutton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 //                startActivity(i);
-                LocalBroadcastManager.getInstance(v.getContext()).sendBroadcast(new Intent("AAAAA"));
+                //LocalBroadcastManager.getInstance(v.getContext()).sendBroadcast(new Intent("AAAAA"));
+                live2DMgr.startMotion(LAppDefine.MOTION_ANGRY);
             }
         });
         ImageButton testbutton2 = (ImageButton) findViewById(R.id.testbutton2);
@@ -172,15 +173,19 @@ public class Launcher extends Activity implements LoaderManager.LoaderCallbacks<
         });
 
 
+/*
+ * set up live2D
+ */
 
         setupGUI();
-        FileManager.init(this.getApplicationContext());
 
-        fragmentManager.beginTransaction().add(R.id.main,launcherFragment).add(R.id.main,appFragment).hide(appFragment).hide(launcherFragment).commit();
+
+        FileManager.init(this.getApplicationContext());
+        fragmentManager.beginTransaction().add(R.id.main, launcherFragment).add(R.id.main, appFragment).hide(appFragment).hide(launcherFragment).commit();
     }
 
     @Override
-    public void onResume(){
+    public void onResume() {
         super.onResume();
         Log.d("LAUCNHER ACTIVITY", "ON RESUME");
         this.goFragment(LauncherFragment.tag);
@@ -188,37 +193,30 @@ public class Launcher extends Activity implements LoaderManager.LoaderCallbacks<
     }
 
 
-    void setupGUI()
-    {
-
-        LAppView view = live2DMgr.createView(this) ;
-
-
-        FrameLayout layout=(FrameLayout) findViewById(R.id.live2dLayout);
+    void setupGUI() {
+        LAppView view = live2DMgr.createView(this);
+        FrameLayout layout = (FrameLayout) findViewById(R.id.live2dLayout);
         layout.addView(view, 0, new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT));
-
-
     }
 
     @Override
-    protected  void onDestroy(){
+    protected void onDestroy() {
         super.onDestroy();
 
     }
 
 
     @Override
-    protected void onPause()
-    {
+    protected void onPause() {
         fragmentManager.popBackStack(AppFragment.tag, FragmentManager.POP_BACK_STACK_INCLUSIVE);
-        live2DMgr.onPause() ;
+        live2DMgr.onPause();
         AppDataHolder.getInstance().writeToFile(this);
         unregisterReceiver(receiver);
         super.onPause();
     }
 
     @Override
-    protected  void onStop(){
+    protected void onStop() {
         super.onStop();
         //LocalBroadcastManager.getInstance(this).unregisterReceiver(receiver);
 
