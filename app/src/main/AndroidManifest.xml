@@ -42,26 +42,6 @@
         <activity android:name=".VoiceRecognitionActivity"
         android:label="VoiceRecognitionActivity">
         </activity>
-        <activity android:name=".assistant.TimeSelect"
-            android:label="TimeSelect">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
-                <!--<category android:name="android.intent.category.HOME" />-->
-                <!--<category android:name="android.intent.category.DEFAULT" />-->
-            </intent-filter>
-        </activity>
-        <activity android:name=".assistant.CategoryActivity"
-            android:label="CategoryActivity">
-        </activity>
-        <activity android:name=".assistant.ContactActivity"
-            android:label="ContactActivity">
-        </activity>
-        <activity android:name=".assistant.RemindActivity"
-            android:label="RemindActivity">
-
-        </activity>
     </application>
 
 </manifest>

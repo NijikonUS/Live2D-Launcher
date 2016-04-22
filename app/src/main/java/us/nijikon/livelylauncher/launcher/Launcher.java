@@ -1,49 +1,55 @@
 package us.nijikon.livelylauncher.launcher;
 
-import android.Manifest;
 import android.app.Activity;
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.app.LoaderManager;
-import android.appwidget.AppWidgetManager;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.Loader;
-import android.content.pm.PackageManager;
 import android.os.Bundle;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.content.ContextCompat;
 import android.support.v4.content.LocalBroadcastManager;
-import android.support.v4.view.ViewPropertyAnimatorCompat;
-import android.support.v7.widget.RecyclerView;
 import android.util.Log;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewAnimationUtils;
 import android.view.ViewGroup;
 import android.view.WindowManager;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.FrameLayout;
-import android.widget.ImageButton;
 import android.widget.LinearLayout;
 
-import jp.live2d.Live2D;
-import jp.live2d.android.Live2DModelAndroid;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.List;
+
 import jp.live2d.utils.android.FileManager;
+import us.nijikon.livelylauncher.assistant.CategoryFragment;
+import us.nijikon.livelylauncher.assistant.NoteFragment;
+import us.nijikon.livelylauncher.assistant.RemindFragment;
+import us.nijikon.livelylauncher.assistant.TimeSelectFragment;
+import us.nijikon.livelylauncher.dao.LivelyLauncherDB;
+import us.nijikon.livelylauncher.assistant.MyIntentService;
 import us.nijikon.livelylauncher.R;
-import us.nijikon.livelylauncher.VoiceRecognitionActivity;
-import us.nijikon.livelylauncher.adapters.AppAdapter;
-import us.nijikon.livelylauncher.assistant.TimeSelect;
+
+//import us.nijikon.livelylauncher.assistant.ContactActivity;
+import us.nijikon.livelylauncher.assistant.ItemFragment;
+
+import us.nijikon.livelylauncher.assistant.ShowContactFragment;
+
 import us.nijikon.livelylauncher.live2dHelpers.LAppDefine;
 import us.nijikon.livelylauncher.live2dHelpers.LAppLive2DManager;
 import us.nijikon.livelylauncher.live2dHelpers.LAppView;
+import us.nijikon.livelylauncher.models.Event;
+import us.nijikon.livelylauncher.models.Person;
+import us.nijikon.livelylauncher.models.Type;
 
-public class Launcher extends Activity implements LoaderManager.LoaderCallbacks<AppDataHolder> {
+public class Launcher extends Activity implements LoaderManager.LoaderCallbacks<AppDataHolder>,TimeSelectFragment.OnClickAtFrameListener, CategoryFragment.OnClickAtFrameListener,
+        ShowContactFragment.OnClickAtFrameListener, NoteFragment.OnClickAtFrameListener, RemindFragment.OnClickAtFrameListener,
+        ItemFragment.OnListFragmentInteractionListener {
 
+
+    private static final String TAG = ".AssistActivity";
 
     private LAppLive2DManager live2DMgr;
     private FragmentManager fragmentManager;
@@ -56,13 +62,29 @@ public class Launcher extends Activity implements LoaderManager.LoaderCallbacks<
     private int usableWidth;
     private BroadcastReceiver receiver;
     private BroadcastReceiver speechReceiver;
+    //assistant
+    public Event event;
+    public Event sevent;
+    Date date;
+    LivelyLauncherDB db;
 
+    public Event getScrEvent(){
+        sevent = new Event();
+        return sevent;
+    }
+
+
+
+    public LAppLive2DManager getLive2DMgr() {
+        return live2DMgr;
+    }
 
     public Launcher() {
         //       instance = this;
         live2DMgr = new LAppLive2DManager();
         appFragment = new AppFragment().setParent(this);
         launcherFragment = new LauncherFragment().setParent(this);
+        // this.deleteDatabase("assistDataBase");
 
     }
 
@@ -77,6 +99,24 @@ public class Launcher extends Activity implements LoaderManager.LoaderCallbacks<
                 fragmentManager.popBackStack();
                 transaction.setCustomAnimations(0, R.animator.left_out)
                         .detach(currentFragment);
+            }
+            else if(currentFragment instanceof ItemFragment){
+                fragmentManager.popBackStack();
+                transaction.setCustomAnimations(0,R.animator.fade_out)
+                        .show(currentFragment)
+                        .remove(currentFragment);
+                //goFragment(LauncherFragment.tag);
+            }
+            else
+//            if(currentFragment instanceof TimeSelect
+//                    || currentFragment instanceof ShowContactFragment
+//                    || currentFragment instanceof Note
+//                    || currentFragment instanceof RemindActivity)
+            {
+                // fragmentManager.popBackStack();
+                transaction.setCustomAnimations(0,R.animator.fade_out)
+                        .show(currentFragment)
+                        .remove(currentFragment);
             }
         }
 
@@ -100,6 +140,62 @@ public class Launcher extends Activity implements LoaderManager.LoaderCallbacks<
                         .attach(appFragment)
                         .show(appFragment);
                 currentFragment = appFragment;
+                break;
+            case TimeSelectFragment.tag:
+                TimeSelectFragment timeSelect = new TimeSelectFragment();
+                transaction
+                        //.addToBackStack(TimeSelect.tag)
+                        .setCustomAnimations(R.animator.right_in, 0)
+                        .add(R.id.main, timeSelect)
+                        .show(timeSelect);
+                currentFragment = timeSelect;
+                break;
+            case CategoryFragment.TAG:
+                CategoryFragment categoryActivity = new CategoryFragment();
+                transaction
+                        //.addToBackStack(CategoryActivity.TAG)
+                        .setCustomAnimations(R.animator.right_in, 0)
+                        .add(R.id.main,categoryActivity)
+                        .show(categoryActivity);
+                currentFragment = categoryActivity;
+                break;
+            case NoteFragment.tag:
+                NoteFragment note = new NoteFragment();
+                transaction
+                        //.addToBackStack(Note.tag)
+                        .setCustomAnimations(R.animator.right_in, 0)
+                        .add(R.id.main,note)
+                        .show(note);
+                currentFragment = note;
+                break;
+            case RemindFragment.tag:
+                RemindFragment remindActivity = new RemindFragment();
+                transaction
+                        //.addToBackStack(RemindActivity.tag)
+                        .setCustomAnimations(R.animator.right_in, 0)
+                        .add(R.id.main,remindActivity)
+                        .show(remindActivity);
+                currentFragment = remindActivity;
+                break;
+            case ItemFragment.TAG:
+                ItemFragment itemFragment = (new ItemFragment()).setParents(this);
+                transaction
+                        .addToBackStack(ItemFragment.TAG)
+                        .setCustomAnimations(R.animator.right_in, 0)
+                        .add(R.id.main, itemFragment)
+                        .show(itemFragment);
+                currentFragment = itemFragment;
+                break;
+            case ShowContactFragment.tag:
+                ShowContactFragment showContactFragment = (new ShowContactFragment()).setParent(this);
+                transaction
+                        //.addToBackStack(showContactFragment.tag)
+                        .setCustomAnimations(R.animator.right_in, 0)
+                        .add(R.id.main, showContactFragment)
+                        .show(showContactFragment);
+                currentFragment = showContactFragment;
+                break;
+
         }
         transaction.commit();
     }
@@ -153,24 +249,24 @@ public class Launcher extends Activity implements LoaderManager.LoaderCallbacks<
         /*
          * testing for voice reg
          */
-        ImageButton testbutton = (ImageButton) findViewById(R.id.testbutton);
-        final Intent i = new Intent(this, VoiceRecognitionActivity.class);
-        testbutton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-//                startActivity(i);
-                //LocalBroadcastManager.getInstance(v.getContext()).sendBroadcast(new Intent("AAAAA"));
-                live2DMgr.startMotion(LAppDefine.MOTION_ANGRY);
-            }
-        });
-        ImageButton testbutton2 = (ImageButton) findViewById(R.id.testbutton2);
-        final Intent ii = new Intent(this, TimeSelect.class);
-        testbutton2.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                startActivity(ii);
-            }
-        });
+//        ImageButton testbutton = (ImageButton) findViewById(R.id.testbutton);
+//
+//        testbutton.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+////                startActivity(i);
+//                //LocalBroadcastManager.getInstance(v.getContext()).sendBroadcast(new Intent("AAAAA"));
+//                live2DMgr.startMotion(LAppDefine.MOTION_ANGRY);
+//            }
+//        });
+//        ImageButton testbutton2 = (ImageButton) findViewById(R.id.testbutton2);
+//        final Intent ii = new Intent(this, TimeSelect.class);
+//        testbutton2.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                startActivity(ii);
+//            }
+//        });
 
 
 /*
@@ -236,8 +332,100 @@ public class Launcher extends Activity implements LoaderManager.LoaderCallbacks<
 
     @Override
     public void onLoaderReset(Loader<AppDataHolder> loader) {
-        loader = null;
+
+    }
+
+    // callback
+
+
+    //call back function from frame
+    @Override
+    public void saveDate(Event event,Date date) {
+        this.event =event;
+        Log.e(TAG, this.event.getDate());
+        this.date = date;
+        Log.e(TAG, date.toString());
+
+    }
+
+    @Override
+    public void savePerson(List<Person> selectedPersonList) {
+        event.setContactPerson(selectedPersonList);
+        for(int i=0;i<selectedPersonList.size();i++){
+            Log.e(TAG, this.event.getContactPerson().get(i).getName());
+        }
+    }
+
+    @Override
+    public void saveNote(String note) {
+
+        event.setNote(note);
+        Log.e(TAG, this.event.getNote());
+    }
+
+    @Override
+    public void saveType(String name) {
+        event.setType(new Type(name));
+        Log.e("save_type", event.getType().getCategoryName());
+
+    }
+
+    @Override
+    public void saveRemind(int remindBefore) {
+
+        event.setRemindBefore(remindBefore);
+        //long alermTime= (date.getTime()- event.getRemindBefore()*1000*60)/1000*60;
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(date);
+        calendar.add(Calendar.MINUTE, -remindBefore);
+        long alermTime = calendar.getTime().getTime();
+
+        Log.e(TAG, "" + new Date(alermTime).toString() + "");
+        Log.e("CHECK DB:", event.getDate() + "/" + event.getEventId() + "/" + event.getType().getCategoryName() + "/" + event.getRemindBefore());
+
+        testAlerm(new Date(alermTime), event);
+        Log.e(TAG, "set alerm");
+
     }
 
 
+    @Override
+    public void saveToDatebase() {
+        if(db == null){
+            db = new LivelyLauncherDB(this);
+        }
+        long id = db.insertType(db.insertEvent(event),event.getType());
+        Log.e("insert DB:", event.getDate() + "/" + event.getEventId() + "/" + event.getType().getCategoryName() + "/" + event.getRemindBefore());
+
+        if(event.getType().getCategoryName().equals("Contact")){
+            for(int i =0; i<event.getContactPerson().size(); i++){
+
+                db.insertPerson(id, event.getContactPerson().get(i));
+            }
+        }
+    }
+
+    public void saveToDatebase(Event event) {
+        if(db == null){
+            db = new LivelyLauncherDB(this);
+        }
+        long id = db.insertType(db.insertEvent(event),event.getType());
+        Log.e("insert DB:", event.getDate() + "/" + event.getEventId() + "/" + event.getType().getCategoryName() + "/" + event.getRemindBefore());
+
+        if(event.getType().getCategoryName().equals("Contact")){
+            for(int i =0; i<event.getContactPerson().size(); i++){
+
+                db.insertPerson(id, event.getContactPerson().get(i));
+            }
+        }
+    }
+
+    @Override
+    public void onListFragmentInteraction() {
+
+    }
+
+    public void testAlerm(Date date, Event event){
+        MyIntentService.setServiceAlarm(this, true, date, event);
+    }
 }

@@ -1,39 +1,78 @@
 package us.nijikon.livelylauncher.assistant;
 
+import android.app.Activity;
 import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.app.DialogFragment;
+import android.app.Fragment;
 import android.app.TimePickerDialog;
-import android.content.Intent;
 import android.os.Bundle;
-import android.support.v4.app.FragmentActivity;
 import android.text.format.DateFormat;
-import android.view.Menu;
+import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.TextView;
 import android.widget.TimePicker;
 
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.Locale;
 
 import us.nijikon.livelylauncher.R;
+import us.nijikon.livelylauncher.launcher.AppFragment;
+import us.nijikon.livelylauncher.launcher.Launcher;
+import us.nijikon.livelylauncher.models.Event;
 
-public class TimeSelect extends FragmentActivity {
+public class TimeSelectFragment extends Fragment {
 
-    TextView txv;
+    public static final String tag = "TimeSelect";
+    static String finalDate;
+    static String finalTime;
+    static final String KEY = "us.nijikon.livelylauncher.assistant.key";
+    Event event;
+    private Launcher launcher;
+    //static int yearG,monthG,dateG,hourG,minuteG=0;
+
+    OnClickAtFrameListener callback;
+
+
+    public interface OnClickAtFrameListener {
+        void saveDate(Event ev, Date date);
+    }
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    public void onAttach(Activity activity) {
+        super.onAttach(activity);
+
+        // This makes sure that the container activity has implemented
+        // the callback interface. If not, it throws an exception
+        callback = (OnClickAtFrameListener)activity;
+    }
+
+
+    public TimeSelectFragment() {
+        // Required empty public constructor
+    }
+
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_time);
-        txv = (TextView) findViewById(R.id.txv);
-        Button btn1 = (Button) findViewById(R.id.btn1);
-        Button btn2 = (Button) findViewById(R.id.btn2);
-        Button btn3 = (Button) findViewById(R.id.btn3);
+    }
+
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+
+        View v =inflater.inflate(R.layout.fragment_time_select, container, false);
+
+        Button btn1 = (Button) v.findViewById(R.id.btn1);
+        Button btn2 = (Button) v.findViewById(R.id.btn2);
+        Button btn3 = (Button) v.findViewById(R.id.btn3);
 
         btn1.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -51,33 +90,49 @@ public class TimeSelect extends FragmentActivity {
         btn3.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                confirm();
+
+                String dateTime = finalDate + " " + finalTime;
+                Date date = TimeSelectFragment.stringToDate(dateTime);
+                if(date == null){
+                    date = new Date();
+                }
+                event = new Event();
+
+                event.setDate(dateTime);
+
+                callback.saveDate(event,date);
+
+                ((Launcher)getActivity()).goFragment(CategoryFragment.TAG);
+
             }
         });
+
+        return v;
     }
 
+
+
     public void showDatePickerDialog(View v) {
-        DialogFragment newFragment = new DatePickerFragment();
+        DatePickerFragment newFragment = new DatePickerFragment();
         newFragment.show(getFragmentManager(), "timePicker");
+        //Log.e("test:", "date error1");
     }
 
     public void showTimePickerDialog(View v) {
-        DialogFragment newFragment = new TimePickerFragment();
+        TimePickerFragment newFragment = new TimePickerFragment();
         newFragment.show(getFragmentManager(), "timePicker");
+        //Log.e("test:", "time error1");
     }
 
-    public void confirm(){
-        Intent intent = new Intent(this, CategoryActivity.class);
-        startActivity(intent);
-    }
+//    public void confirm(Event event){
+//
+//        //eventDate = new EventDate(dateTime);
+//        Intent intent = new Intent(this, CategoryActivity.class);
+//        intent.putExtra(KEY, event);
+//        Log.e("check AT MAIN:", event.getDate());
+//        startActivity(intent);
+//    }
 
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_launcher, menu);
-        return true;
-    }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -94,9 +149,26 @@ public class TimeSelect extends FragmentActivity {
         return super.onOptionsItemSelected(item);
     }
 
+    public static Date stringToDate(String string){
+
+        String DateFormat = "dd/MM/yy HH:mm:ss";
+        SimpleDateFormat sdf = new SimpleDateFormat(DateFormat);
+        try {
+            return sdf.parse(string);
+        } catch (ParseException e) {
+            e.printStackTrace();
+            Log.e("check0:", "exeception");
+        }
+        return null;
+    }
+
+
 
     public static class TimePickerFragment extends DialogFragment implements TimePickerDialog.OnTimeSetListener {
         Calendar c = Calendar.getInstance();
+        Date time ;
+        String timeString;
+
         @Override
         public Dialog onCreateDialog(Bundle savedInstanceState) {
             // the current time as the default values
@@ -116,13 +188,26 @@ public class TimeSelect extends FragmentActivity {
             String myFormat = "HH:mm:ss"; //In which you need put here
             SimpleDateFormat sdf = new SimpleDateFormat(myFormat, Locale.US);
 
-            TextView txv =(TextView)getActivity().findViewById(R.id.textView2);
-            txv.setText(sdf.format(c.getTime()));
+            TextView txv2 =(TextView)getActivity().findViewById(R.id.textView2);
+            time = c.getTime();
+            finalTime = sdf.format(time);
+            txv2.setText(finalTime);
+
+//            hourG=hourOfDay;
+//            minuteG=minute;
+        }
+
+        public String getInnerTime(){
+            return timeString;
         }
     }
 
     public static class DatePickerFragment extends DialogFragment implements DatePickerDialog.OnDateSetListener {
         Calendar c = Calendar.getInstance();
+
+        Date date;
+        String dateString;
+
         @Override
         public Dialog onCreateDialog(Bundle savedInstanceState) {
             // Use the current date as the default date in the picker
@@ -144,7 +229,23 @@ public class TimeSelect extends FragmentActivity {
             String myFormat = "dd/MM/yy"; //In which you need put here
             SimpleDateFormat sdf = new SimpleDateFormat(myFormat, Locale.US);
 
-            TextView txv =(TextView)getActivity().findViewById(R.id.textView1);
-            txv.setText(sdf.format(c.getTime()));
+            TextView txv1 =(TextView)getActivity().findViewById(R.id.textView1);
+            date = c.getTime();
+            finalDate = sdf.format(date);
+            txv1.setText(sdf.format(c.getTime()));
+            Log.e("check:", "pass to outer");
+
+
         }
-    }}
+
+        public String getInnerDate(){
+            return dateString;
+        }
+
+    }
+
+    public TimeSelectFragment setParent(Launcher launcher){
+        this.launcher = launcher;
+        return this;
+    }
+}
