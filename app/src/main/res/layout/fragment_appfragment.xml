@@ -47,6 +47,14 @@
         android:id = "@+id/applist"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
+
+        <xyz.danoz.recyclerviewfastscroller.vertical.VerticalRecyclerViewFastScroller
+            android:id="@+id/fast_scroller"
+            android:layout_width="50dp"
+            android:layout_height="match_parent"
+            android:layout_alignParentRight="true"
+            />
+
     </android.support.v7.widget.RecyclerView>
 </LinearLayout>
  <RelativeLayout

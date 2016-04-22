@@ -226,4 +226,38 @@ public class AppDataHolder {
         context.startActivity(uninstall);
         return true;
     }
+
+    public static boolean unistallByName(String appName,Context context){
+        AppModel one = null;
+        List<AppModel> list = getInstance().data;
+        for(int i = 0; i< list.size();i++){
+            if(list.get(i).getAppName().toLowerCase().equals(appName)){
+                one = list.get(i);
+                break;
+            }
+        }
+        if(one != null){
+            Intent uninstall = new Intent(Intent.ACTION_DELETE, Uri.parse("package:" + one.getPackageName()));
+            context.startActivity(uninstall);
+            return true;
+        }
+        return false;
+    }
+
+    public static boolean openByName(String appName, Context context){
+        AppModel one = null;
+        List<AppModel> list = getInstance().data;
+        for(int i = 0; i< list.size();i++){
+            if(list.get(i).getAppName().toLowerCase().equals(appName)){
+                one = list.get(i);
+                break;
+            }
+        }
+        if(one != null){
+            context.startActivity(context.getPackageManager().getLaunchIntentForPackage(one.getPackageName()));
+            return true;
+        }
+        return false;
+    }
+
 }

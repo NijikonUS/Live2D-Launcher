@@ -40,6 +40,7 @@ import us.nijikon.livelylauncher.R;
 import us.nijikon.livelylauncher.adapters.AppAdapter;
 import us.nijikon.livelylauncher.adapters.Top4Adapter;
 import us.nijikon.livelylauncher.models.AppModel;
+import xyz.danoz.recyclerviewfastscroller.vertical.VerticalRecyclerViewFastScroller;
 
 /**
  * Created by bowang .
@@ -66,15 +67,15 @@ public class AppFragment extends Fragment implements LoaderManager.LoaderCallbac
     public AppFragment setParent(Launcher launcher){
         this.launcher = launcher;
         return this;
-   }
+    }
 
     public void setAppAdapterDate(List<AppModel> date){
-       if(appAdapter!=null) {
-           appAdapter.setData(date);
-       }else{
-           appAdapter = new AppAdapter();
-           appAdapter.setData(date);
-       }
+        if(appAdapter!=null) {
+            appAdapter.setData(date);
+        }else{
+            appAdapter = new AppAdapter();
+            appAdapter.setData(date);
+        }
     }
 
     public void setTop4AdapterData(AppModel[] data){
@@ -139,8 +140,6 @@ public class AppFragment extends Fragment implements LoaderManager.LoaderCallbac
         ItemTouchHelper.Callback callback = new ItemTouchCallBackHelper(appAdapter);
         touchHelper = new ItemTouchHelper(callback);
         touchHelper.attachToRecyclerView(appRecyclerView);
-
-        //
 
         //
         searchButton.setOnClickListener(new View.OnClickListener() {
@@ -210,7 +209,7 @@ public class AppFragment extends Fragment implements LoaderManager.LoaderCallbac
 
     @Override
     public void onLoadFinished(Loader<List<AppModel>> loader, List<AppModel> data) {
-         appAdapter.setData(data);
+        appAdapter.setData(data);
     }
 
     @Override

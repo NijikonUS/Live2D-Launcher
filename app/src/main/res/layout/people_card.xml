@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.v7.widget.CardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:card_view="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:id="@+id/singleContact"
+    android:layout_margin="3dp"
+    android:clickable="true"
+    card_view:cardBackgroundColor="@android:color/white">
+<RelativeLayout
+    android:layout_width="match_parent"
+    android:layout_height="90dp"
+    android:clickable="false"
+    android:paddingBottom="10dp"
+    android:paddingTop="10dp">
+    <ImageView
+        android:id="@+id/contactImage"
+        android:layout_height="60dp"
+        android:layout_width="60dp"
+        android:layout_alignParentLeft="true"
+        android:layout_marginLeft="10dp"
+        android:layout_centerVertical="true"
+        android:background="@android:color/white"
+        android:scaleType="fitCenter">
+    </ImageView>
+    <RelativeLayout android:layout_width="wrap_content"
+        android:layout_height="60dp"
+        android:layout_toRightOf="@id/contactImage"
+        android:layout_centerVertical="true"
+        android:layout_marginLeft="15dp">
+    <TextView
+        android:id="@+id/contactName"
+        android:textStyle="bold"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginTop="5dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+       />
+        <ImageView
+            android:id="@+id/phoneIcon"
+            android:layout_height="20dp"
+            android:layout_width="20dp"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentBottom="true"
+            android:background="@android:color/white"
+            android:src="@drawable/phone"
+            android:scaleType="fitCenter">
+        </ImageView>
+    <TextView android:id="@+id/phoneNumber"
+        android:layout_toRightOf="@id/phoneIcon"
+        android:layout_marginLeft="5dp"
+        android:layout_marginStart="5dp"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="3dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+      />
+    </RelativeLayout>
+    <!--<TextView android:id="@+id/email"-->
+        <!--android:text="1234"-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:layout_alignParentLeft="true"-->
+        <!--android:layout_marginLeft="150dp"-->
+        <!--android:layout_alignParentBottom="true" />-->
+    <CheckBox
+        android:id="@+id/ifSelected"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerVertical="true"
+        android:layout_alignParentRight="true"
+        android:layout_marginRight="10dp"
+        />
+</RelativeLayout></android.support.v7.widget.CardView>
