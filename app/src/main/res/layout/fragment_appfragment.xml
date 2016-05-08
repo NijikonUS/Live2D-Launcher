@@ -1,10 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent" android:layout_height="match_parent"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
     android:orientation="horizontal">
 <LinearLayout
-    android:layout_weight="4"
-    android:layout_width="0dp" android:layout_height="match_parent"
+    android:layout_width="300dp" android:layout_height="match_parent"
     android:orientation="vertical"
     android:background="@color/primaryBack"
     >
@@ -19,11 +20,11 @@
         android:background="@color/primaryText"
         android:layout_margin="5dp"/>
     <View
-        android:layout_marginTop="5dp"
-        android:layout_marginBottom="5dp"
-        android:layout_height="1dp"
-        android:layout_width="match_parent"
-        android:background="@color/divideLine"/>
+    android:layout_marginTop="5dp"
+    android:layout_marginBottom="5dp"
+    android:layout_height="1dp"
+    android:layout_width="match_parent"
+    android:background="@color/divideLine"/>
     <LinearLayout
         android:orientation="horizontal"
         android:layout_width="match_parent"
@@ -41,22 +42,34 @@
         android:layout_height="1dp"
         android:layout_width="match_parent"
         android:background="@color/divideLine"/>
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
     <android.support.v7.widget.RecyclerView
-        android:scrollbars="vertical"
         android:overScrollMode="always"
         android:id = "@+id/applist"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-
-
+        android:layout_height="match_parent">
     </android.support.v7.widget.RecyclerView>
+
+    <us.nijikon.livelylauncher.layoutExtending.RecyclerViewFastScroller
+        android:id="@+id/fastscroller"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_alignBottom="@id/applist"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentRight="true"
+        android:layout_alignTop="@id/applist"
+        />
+
+    </RelativeLayout>
 </LinearLayout>
  <RelativeLayout
      android:background="@color/transparent"
-     android:layout_weight="1"
      android:id="@+id/space"
-     android:layout_width="0dp"
+     android:layout_width="match_parent"
      android:layout_height="match_parent">
+
      <ImageButton
          android:id="@+id/searchButton"
          android:layout_alignParentBottom="true"

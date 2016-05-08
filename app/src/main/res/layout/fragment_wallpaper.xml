@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="@color/primaryBack"
+    >
+
+    <LinearLayout android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:orientation="horizontal"
+        >
+        <Button
+            android:id="@+id/defaultButton"
+            android:layout_height="match_parent"
+            android:layout_width="80dp"
+            android:clickable="true"
+            android:background="@color/primaryBack"
+            android:textColor="@color/primaryText"
+            android:text="Default"
+            android:textSize="15sp"
+            android:layout_gravity="center"
+            ></Button>
+        <Button
+            android:id="@+id/galleryButton"
+            android:layout_height="match_parent"
+            android:layout_width="80dp"
+            android:clickable="true"
+            android:background="@color/transparent"
+            android:textColor="@color/primaryText"
+            android:text="Gallery"
+            android:textSize="15sp"
+            android:layout_gravity="center"
+            ></Button>
+
+    </LinearLayout>
+    <android.support.v7.widget.RecyclerView
+        android:layout_centerHorizontal="true"
+        android:layout_alignParentTop="true"
+        android:id="@+id/wallpapers"
+        android:layout_marginTop="40dp"
+        android:layout_width="match_parent"
+        android:background="@color/primaryBack"
+        android:layout_height="160dp"
+        android:scrollbars="horizontal"
+        android:scrollbarAlwaysDrawHorizontalTrack="true">
+    </android.support.v7.widget.RecyclerView>
+    <View
+        android:layout_marginTop="200dp"
+        android:layout_height="1dp"
+        android:layout_alignParentTop="true"
+        android:layout_width="match_parent"
+        android:background="@color/divideLine"/>
+
+</RelativeLayout>

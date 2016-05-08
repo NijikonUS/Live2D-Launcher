@@ -13,12 +13,12 @@
        />
 
     <RelativeLayout
-        android:id="@+id/hook"
+        android:id="@+id/hookView"
         android:layout_height="wrap_content"
         android:layout_width="wrap_content"
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="40dp">
+        android:layout_marginTop="100dp">
         <TextView
             android:layout_centerInParent="true"
             android:id="@+id/hookText"

@@ -9,4 +9,17 @@
     <string name="allApps">us.nijikon.livelyLauncher.All_APPS_SHARED_PREFERENCE</string>
     <string name="writeFileFlag">us.nijikon.livelyLauncher.APPS_WRITE_FLAG</string>
     <string name="update">us.nijikon.livelyLauncher.UP_DATE</string>
+
+
+    <string name="last_update_time">Last Update Time: %s</string>
+    <string name="weather_condition">Weather: %s</string>
+    <string name="current_temperature">Temperature: %.2f</string>
+    <string name="min_temperature">Min: %.2f</string>
+    <string name="max_temperature">Max: %.2f</string>
+    <string name="wind_speed">Wind Speed: %s</string>
+    <string name="wind_degree">Wind Degree: %s</string>
+    <string name="open_weather_map_app_id">dd949db9a330b0ac87cac42dbb3b90d8</string>
+
+
+    <string name="close_button">close</string>
 </resources>
