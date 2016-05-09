@@ -8,6 +8,15 @@
     <uses-permission android:name="android.permission.READ_CONTACTS"/>
     <uses-permission android:name="android.permission.WRITE_CONTACTS"/>
     <uses-permission android:name="android.permission.VIBRATE"/>
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
+    <uses-permission android:name="android.permission.CALL_PHONE" />
+    <uses-permission android:name="android.permission.READ_PHONE_STATE" />
+    <uses-permission android:name="android.permission.SEND_SMS" />
+    <uses-permission android:name="android.permission.RECEIVE_SMS" />
+    <uses-permission android:name="android.permission.WRITE_SMS" />
+    <uses-permission android:name="android.permission.READ_SMS" />
+
 
     <application
         android:allowBackup="true"
@@ -27,6 +36,8 @@
                 <!--<category android:name="android.intent.category.DEFAULT" />-->
             </intent-filter>
         </activity>
+        <activity
+            android:name=".assistant.LocationActivity"/>
 
         <receiver android:name="us.nijikon.livelylauncher.launcher.PackageChangeReceiver">
             <intent-filter>
@@ -37,11 +48,23 @@
             </intent-filter>
         </receiver>
 
+<meta-data android:name="com.google.android.geo.API_KEY"
+    android:value="@string/google_maps_key"/>
 
+        <service
+            android:name=".assistant.MyIntentService"
+            android:exported="false" />
 
-        <activity android:name=".VoiceRecognitionActivity"
-        android:label="VoiceRecognitionActivity">
+        <activity android:name=".assistant.PendingIntentActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <action android:name="android.intent.action.SEND" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
         </activity>
+
+
     </application>
 
 </manifest>

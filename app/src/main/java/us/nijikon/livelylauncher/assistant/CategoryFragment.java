@@ -24,7 +24,7 @@ import us.nijikon.livelylauncher.launcher.Launcher;
 
 public class CategoryFragment extends Fragment {
 
-    public static final String TAG = ".CategoryActivity";
+    public static final String tag = "CategoryActivity";
     private RecyclerView mRecyclerView;
     private RecyclerView.Adapter mAdapter;
     private RecyclerView.LayoutManager mLayoutManager;
@@ -89,7 +89,6 @@ public class CategoryFragment extends Fragment {
                 EditText editText = (EditText) v.findViewById(R.id.edit);
                 String newText = editText.getText().toString();
                 addNewType(newText);
-
             }
         });
 
@@ -112,7 +111,7 @@ public class CategoryFragment extends Fragment {
         category.add(name);
         LivelyLauncherDB db = new LivelyLauncherDB(getActivity());
         db.addNewType(name);
-        Log.e(TAG, "addNewType:" + name);
+        Log.e(tag, "addNewType:" + name);
         mAdapter.notifyDataSetChanged();
     }
 

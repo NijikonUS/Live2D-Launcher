@@ -39,8 +39,8 @@ import java.util.List;
 import us.nijikon.livelylauncher.R;
 import us.nijikon.livelylauncher.adapters.AppAdapter;
 import us.nijikon.livelylauncher.adapters.Top4Adapter;
+import us.nijikon.livelylauncher.layoutExtending.RecyclerViewFastScroller;
 import us.nijikon.livelylauncher.models.AppModel;
-import xyz.danoz.recyclerviewfastscroller.vertical.VerticalRecyclerViewFastScroller;
 
 /**
  * Created by bowang .
@@ -59,7 +59,7 @@ public class AppFragment extends Fragment implements LoaderManager.LoaderCallbac
     private Launcher launcher;
     private String target;
     private ItemTouchHelper touchHelper;
-
+    RecyclerViewFastScroller fastScroller;
 
 
 
@@ -77,6 +77,7 @@ public class AppFragment extends Fragment implements LoaderManager.LoaderCallbac
             appAdapter.setData(date);
         }
     }
+
 
     public void setTop4AdapterData(AppModel[] data){
         if(top4Adapter!=null){
@@ -127,11 +128,35 @@ public class AppFragment extends Fragment implements LoaderManager.LoaderCallbac
         appRecyclerView = (RecyclerView)view.findViewById(R.id.applist);
         top4RecyclerView = (RecyclerView)view.findViewById(R.id.top4list);
 
-        top4RecyclerView.setLayoutManager(new GridLayoutManager(getActivity(),4));
-        appRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+        top4RecyclerView.setLayoutManager(new GridLayoutManager(getActivity(), 4));
 
         appRecyclerView.setAdapter(appAdapter);
         top4RecyclerView.setAdapter(top4Adapter);
+
+        /* set fast scroller */
+        fastScroller = (RecyclerViewFastScroller)view.findViewById(R.id.fastscroller);
+        appRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false) {
+            @Override
+            public void onLayoutChildren(final RecyclerView.Recycler recycler, final RecyclerView.State state) {
+                super.onLayoutChildren(recycler, state);
+                final int firstVisibleItemPosition = findFirstVisibleItemPosition();
+                if (firstVisibleItemPosition != 0 && firstVisibleItemPosition == -1) {
+                    // this avoids trying to handle un-needed calls
+                    if (firstVisibleItemPosition == -1) {
+                        //not initialized, or no items shown, so hide fast-scroller
+                        fastScroller.setVisibility(View.GONE);
+                    }
+                    return;
+                }
+                final int lastVisibleItemPosition = findLastVisibleItemPosition();
+                int itemsShown = lastVisibleItemPosition - firstVisibleItemPosition + 1;
+                //if all items are shown, hide the fast-scroller
+                fastScroller.setVisibility(appAdapter.getItemCount() > itemsShown ? View.VISIBLE : View.GONE);
+            }
+        });
+        fastScroller.setRecyclerView(appRecyclerView);
+        fastScroller.setViewsToUse(R.layout.fast_scroller, R.id.fastscroller_bubble, R.id.fastscroller_handle);
+
 
         searchView = (SearchView)view.findViewById(R.id.searchView);
         searchView.setQuery("",false);
@@ -169,26 +194,28 @@ public class AppFragment extends Fragment implements LoaderManager.LoaderCallbac
 
             @Override
             public boolean onQueryTextChange(String newText) {
-                Log.d("TEXTCHANGE", newText);
                 target = newText;
                 startSearchHelper();
                 return false;
             }
         });
-
-
-
         return view;
     }
 
     private void startSearchHelper(){
-        getLoaderManager().restartLoader(1,null,this);
+        getLoaderManager().restartLoader(1, null, this);
     }
 
+//    @Override
+//    public void onHiddenChanged(boolean hidden){
+//        if(hidden){
+//            getFragmentManager().beginTransaction().detach(this).commit();
+//        }
+//    }
     @Override
     public void onResume(){
         super.onResume();
-        searchView.setQuery("",false);
+        searchView.setQuery("", false);
         appAdapter.setData(AppDataHolder.getInstance().getData());
         top4Adapter.setTop4(AppDataHolder.getInstance().getTop4());
     }
@@ -196,8 +223,9 @@ public class AppFragment extends Fragment implements LoaderManager.LoaderCallbac
     public void onPause(){
         super.onPause();
         Log.d(tag, "on pause");
-        launcher.getFragmentManager().popBackStack(tag, 0);
-        launcher.goFragment(LauncherFragment.tag);
+   //     getFragmentManager().beginTransaction().detach(this).commit();
+        //launcher.getFragmentManager().popBackStack(tag, 0);
+        //launcher.goFragment(LauncherFragment.tag);
     }
 
     //Search loader

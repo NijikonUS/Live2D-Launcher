@@ -11,7 +11,9 @@ public class LAppDefine
 	public static boolean DEBUG_TOUCH_LOG=false;
 	public static boolean DEBUG_DRAW_HIT_AREA=false;
 
+	public static String back_image_path = "walltest.png";
 
+	public static boolean inApp = true;
 	
 	
 	public static final float VIEW_MAX_SCALE = 1f;
@@ -27,8 +29,6 @@ public class LAppDefine
 	public static final float VIEW_LOGICAL_MAX_BOTTOM = -2;
 	public static final float VIEW_LOGICAL_MAX_TOP = 2;
 
-	
-//	public static final String BACK_IMAGE_NAME = "image/back_class_normal.png" ;
 
 	public static final String MODEL_EPSILON    = "live2d/epsilon/Epsilon.model.json";
 
@@ -41,6 +41,7 @@ public class LAppDefine
 	public static final String MOTION_ANGRY			="angry";
 	public static final String MOTION_HOMESCREEM		="homeScreenRandom";
 	public static final String MOTION_SHY           ="shy";
+	public static final String MOTION_SHAKE = "shake";
 	static final String HIT_AREA_HEAD		="head";
 	static final String HIT_AREA_BODY		="body";
 

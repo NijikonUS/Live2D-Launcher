@@ -5,19 +5,15 @@ import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.app.LoaderManager;
-import android.content.BroadcastReceiver;
-import android.content.Context;
-import android.content.Intent;
-import android.content.IntentFilter;
 import android.content.Loader;
+import android.database.Cursor;
 import android.os.Bundle;
-import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
-import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
+import android.widget.Toast;
 
 import java.util.Calendar;
 import java.util.Date;
@@ -37,12 +33,12 @@ import us.nijikon.livelylauncher.assistant.ItemFragment;
 
 import us.nijikon.livelylauncher.assistant.ShowContactFragment;
 
-import us.nijikon.livelylauncher.live2dHelpers.LAppDefine;
 import us.nijikon.livelylauncher.live2dHelpers.LAppLive2DManager;
 import us.nijikon.livelylauncher.live2dHelpers.LAppView;
 import us.nijikon.livelylauncher.models.Event;
 import us.nijikon.livelylauncher.models.Person;
 import us.nijikon.livelylauncher.models.Type;
+import us.nijikon.livelylauncher.models.Weather;
 
 public class Launcher extends Activity implements LoaderManager.LoaderCallbacks<AppDataHolder>,TimeSelectFragment.OnClickAtFrameListener, CategoryFragment.OnClickAtFrameListener,
         ShowContactFragment.OnClickAtFrameListener, NoteFragment.OnClickAtFrameListener, RemindFragment.OnClickAtFrameListener,
@@ -53,25 +49,24 @@ public class Launcher extends Activity implements LoaderManager.LoaderCallbacks<
 
     private LAppLive2DManager live2DMgr;
     private FragmentManager fragmentManager;
-    //private ImageButton appButton;
     private AppFragment appFragment;
     private LauncherFragment launcherFragment;
     private Fragment currentFragment;
+    private TimeSelectFragment timeSelectFragment;
+    private CategoryFragment categoryFragment;
+    private NoteFragment noteFragment;
+    private RemindFragment remindFragment;
+    private ItemFragment itemFragment;
+    private ShowContactFragment showContactFragment;
+    private WeatherFragment weatherFragment;
+    private Weather currentWeather;
+
 
     private int usableHeight;
     private int usableWidth;
-    private BroadcastReceiver receiver;
-    private BroadcastReceiver speechReceiver;
     //assistant
     public Event event;
-    public Event sevent;
     Date date;
-    LivelyLauncherDB db;
-
-    public Event getScrEvent(){
-        sevent = new Event();
-        return sevent;
-    }
 
 
 
@@ -82,122 +77,166 @@ public class Launcher extends Activity implements LoaderManager.LoaderCallbacks<
     public Launcher() {
         //       instance = this;
         live2DMgr = new LAppLive2DManager();
-        appFragment = new AppFragment().setParent(this);
-        launcherFragment = new LauncherFragment().setParent(this);
+
+     //   appFragment = new AppFragment().setParent(this);
+    //    launcherFragment = new LauncherFragment().setParent(this);
         // this.deleteDatabase("assistDataBase");
 
     }
 
 
-    public void goFragment(String tag) {
-        FragmentTransaction transaction = fragmentManager.beginTransaction();
-        if (currentFragment != null) {
-            if (currentFragment instanceof LauncherFragment) {
-                transaction.setCustomAnimations(0, R.animator.fade_out)
-                        .detach(currentFragment);
-            } else if (currentFragment instanceof AppFragment) {
-                fragmentManager.popBackStack();
-                transaction.setCustomAnimations(0, R.animator.left_out)
-                        .detach(currentFragment);
-            }
-            else if(currentFragment instanceof ItemFragment){
-                fragmentManager.popBackStack();
-                transaction.setCustomAnimations(0,R.animator.fade_out)
-                        .show(currentFragment)
-                        .remove(currentFragment);
-                //goFragment(LauncherFragment.tag);
-            }
-            else
-//            if(currentFragment instanceof TimeSelect
-//                    || currentFragment instanceof ShowContactFragment
-//                    || currentFragment instanceof Note
-//                    || currentFragment instanceof RemindActivity)
-            {
-                // fragmentManager.popBackStack();
-                transaction.setCustomAnimations(0,R.animator.fade_out)
-                        .show(currentFragment)
-                        .remove(currentFragment);
-            }
-        }
-
+    public Fragment goFragment(String tag) {
+        FragmentTransaction transaction = getFragmentManager().beginTransaction();
         switch (tag) {
             case LauncherFragment.tag:
                 if (launcherFragment == null) {
                     launcherFragment = new LauncherFragment().setParent(this);
+                }
+                if(!launcherFragment.isAdded()){
                     transaction.add(R.id.main, launcherFragment);
                 }
-                transaction.attach(launcherFragment)
-                        .show(launcherFragment);
+               // transaction.attach(launcherFragment);
+                if(currentFragment != null) {
+                    if (currentFragment instanceof AppFragment) {
+                        // leave appFragment
+                        //getFragmentManager().popBackStack(AppFragment.tag,FragmentManager.POP_BACK_STACK_INCLUSIVE);
+                        transaction.setCustomAnimations(R.animator.fade_in, R.animator.left_out);
+                    } else {
+                        // leave assistant fragments
+                        transaction.setCustomAnimations(R.animator.left_in, R.animator.right_out);
+                    }
+                    transaction.show(launcherFragment).hide(currentFragment);
+                }else {
+                    transaction.show(launcherFragment);
+                }
+                transaction.commit();
                 currentFragment = launcherFragment;
+                //TODO clean the event or init other stuffs
                 break;
+
             case AppFragment.tag:
-                if (appFragment == null) {
+                //if (appFragment == null) {
                     appFragment = new AppFragment().setParent(this);
+              //  }
+                if(!appFragment.isAdded()){
                     transaction.add(R.id.main, appFragment);
                 }
-                transaction.addToBackStack(AppFragment.tag)
-                        .setCustomAnimations(R.animator.left_in, 0, 0, R.animator.left_out)
-                        .attach(appFragment)
-                        .show(appFragment);
+                //currentFragment must be launcherFragment
+                transaction//.addToBackStack(AppFragment.tag)
+                            .setCustomAnimations(R.animator.left_in, R.animator.fade_out);
+                              transaction.hide(launcherFragment);
+                              transaction.show(appFragment);
+                              transaction.commit();
                 currentFragment = appFragment;
                 break;
             case TimeSelectFragment.tag:
-                TimeSelectFragment timeSelect = new TimeSelectFragment();
+                if(timeSelectFragment == null){
+                    timeSelectFragment = new TimeSelectFragment();
+                }
+                if(!timeSelectFragment.isAdded()){
+                    transaction.add(R.id.main, timeSelectFragment);
+                }
                 transaction
                         //.addToBackStack(TimeSelect.tag)
-                        .setCustomAnimations(R.animator.right_in, 0)
-                        .add(R.id.main, timeSelect)
-                        .show(timeSelect);
-                currentFragment = timeSelect;
+                        .setCustomAnimations(R.animator.fade_in,R.animator.fade_out);
+                transaction.show(timeSelectFragment);
+                transaction.hide(currentFragment);
+                transaction.commit();
+                currentFragment = timeSelectFragment;
                 break;
-            case CategoryFragment.TAG:
-                CategoryFragment categoryActivity = new CategoryFragment();
+
+            case CategoryFragment.tag:
+                if(categoryFragment == null) {
+                    categoryFragment = new CategoryFragment();
+                }
+                if(!categoryFragment.isAdded()){
+                    transaction.add(R.id.main,categoryFragment);
+                }
                 transaction
                         //.addToBackStack(CategoryActivity.TAG)
-                        .setCustomAnimations(R.animator.right_in, 0)
-                        .add(R.id.main,categoryActivity)
-                        .show(categoryActivity);
-                currentFragment = categoryActivity;
+                        .setCustomAnimations(R.animator.fade_in, 0)
+                        .remove(currentFragment)
+                        .show(categoryFragment).commit();
+                currentFragment = categoryFragment;
                 break;
+
             case NoteFragment.tag:
-                NoteFragment note = new NoteFragment();
+                if(noteFragment == null) {
+                    noteFragment = new NoteFragment();
+                }
+                if(!noteFragment.isAdded()){
+                    transaction.add(R.id.main,noteFragment);
+                }
                 transaction
                         //.addToBackStack(Note.tag)
-                        .setCustomAnimations(R.animator.right_in, 0)
-                        .add(R.id.main,note)
-                        .show(note);
-                currentFragment = note;
+                        .setCustomAnimations(R.animator.fade_in, 0)
+                        .remove(currentFragment)
+                        .show(noteFragment).commit();
+                currentFragment = noteFragment;
                 break;
+
             case RemindFragment.tag:
-                RemindFragment remindActivity = new RemindFragment();
+                if(remindFragment == null) {
+                    remindFragment = new RemindFragment();
+                }
+                if(!remindFragment.isAdded()){
+                    transaction.add(R.id.main,remindFragment);
+                }
                 transaction
                         //.addToBackStack(RemindActivity.tag)
-                        .setCustomAnimations(R.animator.right_in, 0)
-                        .add(R.id.main,remindActivity)
-                        .show(remindActivity);
-                currentFragment = remindActivity;
+                        .setCustomAnimations(R.animator.fade_in, 0)
+                        .remove(currentFragment)
+                        .show(remindFragment).commit();
+                currentFragment = remindFragment;
                 break;
+
             case ItemFragment.TAG:
-                ItemFragment itemFragment = (new ItemFragment()).setParents(this);
-                transaction
-                        .addToBackStack(ItemFragment.TAG)
-                        .setCustomAnimations(R.animator.right_in, 0)
-                        .add(R.id.main, itemFragment)
-                        .show(itemFragment);
+                if(itemFragment == null) {
+                     itemFragment = (new ItemFragment()).setParents(this);
+                }
+                if(!itemFragment.isAdded()){
+                    transaction.add(R.id.main,itemFragment);
+                }
+                transaction.setCustomAnimations(R.animator.fade_in, 0);
+                if(currentFragment instanceof RemindFragment) {
+                    // call manually
+                    transaction.remove(currentFragment);
+                }else {
+                    //call by voice
+                    transaction.hide(currentFragment);
+                }
+                transaction.show(itemFragment).commit();
                 currentFragment = itemFragment;
                 break;
+
             case ShowContactFragment.tag:
-                ShowContactFragment showContactFragment = (new ShowContactFragment()).setParent(this);
-                transaction
-                        //.addToBackStack(showContactFragment.tag)
-                        .setCustomAnimations(R.animator.right_in, 0)
-                        .add(R.id.main, showContactFragment)
-                        .show(showContactFragment);
+                if(showContactFragment == null) {
+                     showContactFragment = (new ShowContactFragment()).setParent(this);
+                }
+                if(!showContactFragment.isAdded()){
+                    transaction.add(R.id.main,showContactFragment);
+                }
+                transaction.setCustomAnimations(R.animator.fade_in, 0)
+                        .remove(currentFragment)
+                        .show(showContactFragment).commit();
                 currentFragment = showContactFragment;
                 break;
 
+            case WeatherFragment.tag:
+                if(weatherFragment ==null){
+                    weatherFragment = new WeatherFragment();
+                }
+                if(!weatherFragment.isAdded()){
+                    transaction.add(R.id.hookView,weatherFragment);
+                }
+                transaction.addToBackStack(WeatherFragment.tag);
+                transaction.hide(currentFragment);
+                transaction.commit();
+                return weatherFragment;
+
+
         }
-        transaction.commit();
+        return currentFragment;
     }
 
     public int getUsableHeight() {
@@ -214,86 +253,51 @@ public class Launcher extends Activity implements LoaderManager.LoaderCallbacks<
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_launcher);
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION);
+        LAppLive2DManager.readWallPaper(this);
 
         //setup screen size used for fragment
 
         usableWidth = getResources().getDisplayMetrics().widthPixels;
         usableHeight = getResources().getDisplayMetrics().heightPixels;
 
+        // init fragment manager
+        fragmentManager =  getFragmentManager();
         //load data
         getLoaderManager().initLoader(0, null, this);
 
-
-        fragmentManager = getFragmentManager();
-
-        receiver = new BroadcastReceiver() {
-            @Override
-            public void onReceive(Context context, Intent intent) {
-                Log.i("local Receiver", "Gotcha");
-                if (appFragment != null) {
-                    appFragment.setAppAdapterDate(AppDataHolder.getInstance().getData());
-                }
-            }
-        };
-
-        speechReceiver = new BroadcastReceiver() {
-            @Override
-            public void onReceive(Context context, Intent intent) {
-                Log.i("Speeach Receiver", "Gotcha");
-            }
-        };
-
-        LocalBroadcastManager.getInstance(this).registerReceiver(speechReceiver, new IntentFilter("AAAAA"));
-
-
-        /*
-         * testing for voice reg
-         */
-//        ImageButton testbutton = (ImageButton) findViewById(R.id.testbutton);
-//
-//        testbutton.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-////                startActivity(i);
-//                //LocalBroadcastManager.getInstance(v.getContext()).sendBroadcast(new Intent("AAAAA"));
-//                live2DMgr.startMotion(LAppDefine.MOTION_ANGRY);
-//            }
-//        });
-//        ImageButton testbutton2 = (ImageButton) findViewById(R.id.testbutton2);
-//        final Intent ii = new Intent(this, TimeSelect.class);
-//        testbutton2.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                startActivity(ii);
-//            }
-//        });
-
-
-/*
- * set up live2D
- */
-
+        // set up live2D
         setupGUI();
-
-
         FileManager.init(this.getApplicationContext());
-        fragmentManager.beginTransaction().add(R.id.main, launcherFragment).add(R.id.main, appFragment).hide(appFragment).hide(launcherFragment).commit();
+
+        // go
+       // this.goFragment(LauncherFragment.tag);
+        //fragmentManager.beginTransaction().add(R.id.main, launcherFragment).add(R.id.main, appFragment).hide(appFragment).hide(launcherFragment).commit();
     }
 
     @Override
     public void onResume() {
         super.onResume();
         Log.d("LAUCNHER ACTIVITY", "ON RESUME");
-        this.goFragment(LauncherFragment.tag);
-        registerReceiver(receiver, new IntentFilter(getResources().getString(R.string.update)));
+        if(currentFragment == null) {
+            this.goFragment(LauncherFragment.tag);
+        }
+    }
+
+    @Override
+    public void onBackPressed(){
+        //super.onBackPressed();
+        if(currentFragment instanceof AppFragment){
+            goFragment(LauncherFragment.tag);
+        }
     }
 
 
-    void setupGUI() {
+    public void setupGUI() {
         LAppView view = live2DMgr.createView(this);
         FrameLayout layout = (FrameLayout) findViewById(R.id.live2dLayout);
         layout.addView(view, 0, new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT));
     }
+
 
     @Override
     protected void onDestroy() {
@@ -304,10 +308,9 @@ public class Launcher extends Activity implements LoaderManager.LoaderCallbacks<
 
     @Override
     protected void onPause() {
-        fragmentManager.popBackStack(AppFragment.tag, FragmentManager.POP_BACK_STACK_INCLUSIVE);
+      //fragmentManager.popBackStack(AppFragment.tag, FragmentManager.POP_BACK_STACK_INCLUSIVE);
         live2DMgr.onPause();
         AppDataHolder.getInstance().writeToFile(this);
-        unregisterReceiver(receiver);
         super.onPause();
     }
 
@@ -326,8 +329,10 @@ public class Launcher extends Activity implements LoaderManager.LoaderCallbacks<
 
     @Override
     public void onLoadFinished(Loader<AppDataHolder> loader, AppDataHolder data) {
-        appFragment.setAppAdapterDate(data.getData());
-        appFragment.setTop4AdapterData(data.getTop4());
+        if(appFragment!=null) {
+            appFragment.setAppAdapterDate(data.getData());
+            appFragment.setTop4AdapterData(data.getTop4());
+        }
     }
 
     @Override
@@ -336,9 +341,7 @@ public class Launcher extends Activity implements LoaderManager.LoaderCallbacks<
     }
 
     // callback
-
-
-    //call back function from frame
+    // call back function from frame
     @Override
     public void saveDate(Event event,Date date) {
         this.event =event;
@@ -374,50 +377,42 @@ public class Launcher extends Activity implements LoaderManager.LoaderCallbacks<
     public void saveRemind(int remindBefore) {
 
         event.setRemindBefore(remindBefore);
-        //long alermTime= (date.getTime()- event.getRemindBefore()*1000*60)/1000*60;
-        Calendar calendar = Calendar.getInstance();
-        calendar.setTime(date);
-        calendar.add(Calendar.MINUTE, -remindBefore);
-        long alermTime = calendar.getTime().getTime();
 
-        Log.e(TAG, "" + new Date(alermTime).toString() + "");
-        Log.e("CHECK DB:", event.getDate() + "/" + event.getEventId() + "/" + event.getType().getCategoryName() + "/" + event.getRemindBefore());
-
-        testAlerm(new Date(alermTime), event);
-        Log.e(TAG, "set alerm");
 
     }
 
 
     @Override
     public void saveToDatebase() {
-        if(db == null){
-            db = new LivelyLauncherDB(this);
-        }
-        long id = db.insertType(db.insertEvent(event),event.getType());
-        Log.e("insert DB:", event.getDate() + "/" + event.getEventId() + "/" + event.getType().getCategoryName() + "/" + event.getRemindBefore());
+        if(event == null) return;
+        LivelyLauncherDB db = new LivelyLauncherDB(this);
 
-        if(event.getType().getCategoryName().equals("Contact")){
+        long insertEventId = db.insertEvent(event);
+        event.setRowId(insertEventId);
+
+        long id = db.insertType(insertEventId,event.getType());
+
+        Log.e(TAG, "insertDB:" + event.getDate() + "/" + event.getRowId() + "/" + event.getType().getCategoryName() + "/" + event.getRemindBefore());
+
+        if(event.getType().getCategoryName().equals("Contact") && event.getContactPerson()!=null){
+            Cursor c = db.getLatestCursor();
+            c.moveToFirst();
+            int queryId = c.getInt(0);
+            Log.e(TAG,"queryId:"+queryId);
+
             for(int i =0; i<event.getContactPerson().size(); i++){
-
-                db.insertPerson(id, event.getContactPerson().get(i));
+                db.insertPerson(queryId, event.getContactPerson().get(i));
+                Log.e(TAG,"insert person:"+event.getContactPerson().get(i).getName());
             }
         }
-    }
 
-    public void saveToDatebase(Event event) {
-        if(db == null){
-            db = new LivelyLauncherDB(this);
-        }
-        long id = db.insertType(db.insertEvent(event),event.getType());
-        Log.e("insert DB:", event.getDate() + "/" + event.getEventId() + "/" + event.getType().getCategoryName() + "/" + event.getRemindBefore());
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(date);
+        calendar.add(Calendar.MINUTE, -event.getRemindBefore());
+        long alermTime = calendar.getTime().getTime();
 
-        if(event.getType().getCategoryName().equals("Contact")){
-            for(int i =0; i<event.getContactPerson().size(); i++){
-
-                db.insertPerson(id, event.getContactPerson().get(i));
-            }
-        }
+        testAlerm(new Date(alermTime), event);
+        db.close();
     }
 
     @Override

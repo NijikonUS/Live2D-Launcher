@@ -23,10 +23,10 @@ public class LAppView extends GLSurfaceView {
 	static public final String TAG = "LAppView";
 
 	
-	private LAppRenderer 				renderer ;
+	private LAppRenderer renderer ;
 
-	
-	private LAppLive2DManager 			delegate;
+
+	private LAppLive2DManager delegate;
 	private L2DMatrix44 deviceToScreen;
 	private L2DViewMatrix viewMatrix;
 	private AccelHelper accelHelper;
@@ -35,35 +35,39 @@ public class LAppView extends GLSurfaceView {
 
 	GestureDetector gestureDetector;
 
-	public LAppView(  Context context )
+	public LAppView(Context context)
 	{
-		super( context ) ;
+		super(context) ;
 		setFocusable(true);
 	}
 
 
+	public LAppRenderer getRenderer(){
+		return this.renderer;
+	}
+
 	public void setLive2DManager( LAppLive2DManager live2DMgr)
 	{
 		this.delegate = live2DMgr ;
-		this.renderer = new LAppRenderer( live2DMgr  ) ;
+		this.renderer = new LAppRenderer(live2DMgr) ;
 
 		setRenderer(renderer);
 
 		gestureDetector = new GestureDetector(this.getContext()  , simpleOnGestureListener ) ;
 
 
-		
+
 		deviceToScreen=new L2DMatrix44();
 
-		
+
 		viewMatrix=new L2DViewMatrix();
 
-		
+
 		viewMatrix.setMaxScale( LAppDefine.VIEW_MAX_SCALE );
 		viewMatrix.setMinScale( LAppDefine.VIEW_MIN_SCALE );
 
 
-		
+
 		viewMatrix.setMaxScreenRect(
 				LAppDefine.VIEW_LOGICAL_MAX_LEFT,
 				LAppDefine.VIEW_LOGICAL_MAX_RIGHT,
@@ -71,7 +75,7 @@ public class LAppView extends GLSurfaceView {
 				LAppDefine.VIEW_LOGICAL_MAX_TOP
 				);
 
-		
+
 		touchMgr=new TouchManager();
 
 		dragMgr  = new L2DTargetPoint();
@@ -80,12 +84,12 @@ public class LAppView extends GLSurfaceView {
 
 	public void startAccel(Activity activity)
 	{
-		
+
 		accelHelper = new AccelHelper(activity) ;
 	}
 
 
-	
+
 	@Override
 	public boolean onTouchEvent(MotionEvent event)
 	{
@@ -96,10 +100,10 @@ public class LAppView extends GLSurfaceView {
 	    case MotionEvent.ACTION_DOWN:
 	        ret = true ;
 
-			
+
 			touchNum = event.getPointerCount() ;
 
-			if( touchNum == 1 )
+			if(touchNum == 1)
 			{
 				touchesBegan(event.getX(),event.getY());
 			}
@@ -109,7 +113,7 @@ public class LAppView extends GLSurfaceView {
 			}
 			else
 			{
-				
+
 			}
 
 	        break;
@@ -117,7 +121,7 @@ public class LAppView extends GLSurfaceView {
 	    	touchesEnded();
 	        break;
 	    case MotionEvent.ACTION_MOVE:
-	    	
+
 			touchNum = event.getPointerCount() ;
 
 			if( touchNum == 1 )
@@ -130,7 +134,7 @@ public class LAppView extends GLSurfaceView {
 			}
 			else
 			{
-				
+
 			}
 	        break;
 	    case MotionEvent.ACTION_CANCEL:
@@ -142,7 +146,7 @@ public class LAppView extends GLSurfaceView {
 	}
 
 
-	
+
 	public void onResume()
 	{
 		if(accelHelper!=null)
@@ -153,7 +157,7 @@ public class LAppView extends GLSurfaceView {
 	}
 
 
-	
+
 	public void onPause()
 	{
 		if(accelHelper!=null)
@@ -185,19 +189,20 @@ public class LAppView extends GLSurfaceView {
 	{
 		dragMgr.update();
 		delegate.setDrag(dragMgr.getX(), dragMgr.getY());
-
 		accelHelper.update();
 
-		if( accelHelper.getShake() > 1.5f )
-		{
-			if(LAppDefine.DEBUG_LOG) Log.d(TAG, "shake event");
-			
-			delegate.shakeEvent() ;
-			accelHelper.resetShake() ;
-		}
+	if (accelHelper.getShake() > 1.5f) {
+		if (LAppDefine.DEBUG_LOG) Log.d(TAG, "shake event");
 
-		delegate.setAccel(accelHelper.getAccelX(), accelHelper.getAccelY(), accelHelper.getAccelZ());
-		renderer.setAccel(accelHelper.getAccelX(), accelHelper.getAccelY(), accelHelper.getAccelZ());
+		delegate.shakeEvent();
+		accelHelper.resetShake();
+	}
+
+	delegate.setAccel(accelHelper.getAccelX(), accelHelper.getAccelY(), accelHelper.getAccelZ());
+	renderer.setAccel(accelHelper.getAccelX(), accelHelper.getAccelY(), accelHelper.getAccelZ());
+
+		//
+
 	}
 
 

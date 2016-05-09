@@ -1,11 +1,11 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
+
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:padding="50dp"
     android:orientation="vertical"
     android:background="@color/secondaryBack"
-    tools:context=".assistant.Launcher">
+    android:clickable="true">
 
     <TextView
         android:layout_width="wrap_content"

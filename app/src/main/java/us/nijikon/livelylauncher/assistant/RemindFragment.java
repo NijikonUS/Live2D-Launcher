@@ -148,6 +148,7 @@ public class RemindFragment extends Fragment {
                 }
 
                 callback.saveToDatebase();
+
                 ((Launcher)getActivity()).goFragment(ItemFragment.TAG);
 
             }

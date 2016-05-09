@@ -192,7 +192,7 @@ public class ContactAdapter extends RecyclerView.Adapter<ContactAdapter.PeopleIt
 
             }else{
                 holder.contactImage.setBackgroundColor(thisColor);
-                holder.contactImage.setImageResource(R.drawable.contact);
+                holder.contactImage.setImageResource(R.drawable.contact_people);
                 Log.d(tag, "NO PHOTO!!");
             }
 

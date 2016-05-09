@@ -6,10 +6,15 @@ import android.app.Dialog;
 import android.app.DialogFragment;
 import android.app.Fragment;
 import android.app.TimePickerDialog;
+import android.content.Intent;
 import android.os.Bundle;
+import android.os.Parcelable;
+import android.support.annotation.Nullable;
+import android.support.v4.app.FragmentActivity;
 import android.text.format.DateFormat;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
@@ -22,12 +27,13 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.Locale;
 
 import us.nijikon.livelylauncher.R;
-import us.nijikon.livelylauncher.launcher.AppFragment;
 import us.nijikon.livelylauncher.launcher.Launcher;
 import us.nijikon.livelylauncher.models.Event;
+import us.nijikon.livelylauncher.models.EventDate;
 
 public class TimeSelectFragment extends Fragment {
 
@@ -35,15 +41,12 @@ public class TimeSelectFragment extends Fragment {
     static String finalDate;
     static String finalTime;
     static final String KEY = "us.nijikon.livelylauncher.assistant.key";
-    Event event;
-    private Launcher launcher;
-    //static int yearG,monthG,dateG,hourG,minuteG=0;
 
     OnClickAtFrameListener callback;
 
 
     public interface OnClickAtFrameListener {
-        void saveDate(Event ev, Date date);
+        void saveDate(Event ev,Date date);
     }
 
     @Override
@@ -91,18 +94,30 @@ public class TimeSelectFragment extends Fragment {
             @Override
             public void onClick(View v) {
 
-                String dateTime = finalDate + " " + finalTime;
-                Date date = TimeSelectFragment.stringToDate(dateTime);
-                if(date == null){
-                    date = new Date();
+
+
+                if(finalDate==null){
+                    SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yy", Locale.US);
+                    finalDate = sdf.format(Calendar.getInstance().getTime());
+
+                }if(finalTime==null){
+
+                    SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss", Locale.US);
+                    finalTime = sdf.format(Calendar.getInstance().getTime());
                 }
-                event = new Event();
 
+                String dateTime = finalDate + " " + finalTime;
+                final Date date = TimeSelectFragment.stringToDate(dateTime);
+
+
+                Log.e("check0:", date.toString());
+                Event event = new Event();
+                Log.e("check0:", "before set");
                 event.setDate(dateTime);
-
+                Log.e("check1:", event.getDate());
                 callback.saveDate(event,date);
-
-                ((Launcher)getActivity()).goFragment(CategoryFragment.TAG);
+                // go category
+                ((Launcher)getActivity()).goFragment(CategoryFragment.tag);
 
             }
         });
@@ -233,7 +248,7 @@ public class TimeSelectFragment extends Fragment {
             date = c.getTime();
             finalDate = sdf.format(date);
             txv1.setText(sdf.format(c.getTime()));
-            Log.e("check:", "pass to outer");
+            Log.e("check:","pass to outer");
 
 
         }
@@ -244,8 +259,5 @@ public class TimeSelectFragment extends Fragment {
 
     }
 
-    public TimeSelectFragment setParent(Launcher launcher){
-        this.launcher = launcher;
-        return this;
-    }
+
 }

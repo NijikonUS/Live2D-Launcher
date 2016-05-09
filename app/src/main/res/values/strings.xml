@@ -19,6 +19,7 @@
     <string name="wind_speed">Wind Speed: %s</string>
     <string name="wind_degree">Wind Degree: %s</string>
     <string name="open_weather_map_app_id">dd949db9a330b0ac87cac42dbb3b90d8</string>
+    <string name="google_maps_key" templateMergeStrategy="preserve" translatable="false">AIzaSyCzNxy2w4A0lhnnSrY3ncfW9OXoLkgVxpQ</string>
 
 
     <string name="close_button">close</string>

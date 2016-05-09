@@ -85,6 +85,11 @@
 		"file":"motions/Epsilon_m_sp_05.mtn","fade_in":800, "fade_out":800
 	  }
 	],
+	"shake":[
+	  {
+		"file":"motions/Epsilon_shake_01.mtn","fade_in":800,"fade_out":800
+	  }
+	],
 	"test":[
 	  {
 		"file":"motions/Epsilon_m_01.mtn","fade_in":800, "fade_out":800

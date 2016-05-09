@@ -2,6 +2,7 @@ package us.nijikon.livelylauncher.assistant;
 
 import android.app.Activity;
 import android.app.Fragment;
+import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
@@ -10,6 +11,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.LinearLayout;
 
 import java.util.ArrayList;
@@ -37,15 +39,14 @@ public class ItemFragment extends Fragment {
     private int mColumnCount = 1;
 
     private RecyclerView mRecyclerView;
-    private OnListFragmentInteractionListener mListener;
     private List<Event> events ;
-    private List<String> typeNames ;
+    private List<String> typeNames;
+    private String[] personList;
+    private OnListFragmentInteractionListener mListener;
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
      * fragment (e.g. upon screen orientation changes).
      */
-    public ItemFragment() {
-    }
 
     private Launcher launcher;
     public ItemFragment setParents(Launcher p){
@@ -63,28 +64,48 @@ public class ItemFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_item_list, container, false);
-        view.setLayoutParams(new LinearLayout.LayoutParams(((Launcher) getActivity()).getUsableWidth(), ((Launcher) getActivity()).getUsableHeight()));
+//        Button home = (Button)view.findViewById(R.id.home);
+//        home.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                Intent intent = new Intent(v.getContext(),AssistActivity.class);
+//                v.getContext().startActivity(intent);
+//            }
+//        });
 
-        // Set the adapter
-
+        // Query database
         LivelyLauncherDB db = new LivelyLauncherDB(getActivity());
         events = db.getAllEvents();
-        Log.e(TAG, "store events:" + events.get(0).getNote());
+        Log.e(TAG, "store events:"+events.get(0).getNote());
 
         typeNames = new ArrayList<>();
+        personList = new String[events.size()];
 
         for(int i = 0;i<events.size();i++){
             Cursor c = db.queryDatabaseType(events.get(i).getEventId());
             c.moveToFirst();
-            typeNames.add(c.getString(1));
+            String typeName = c.getString(1);
+            typeNames.add(typeName);
             Log.e(TAG, typeNames.get(i));
+
+            if(typeName.equals("Contact")){
+                StringBuilder personConcate = new StringBuilder();
+                Cursor personCursor = db.queryDatabasePerson(events.get(i).getEventId());
+                for (personCursor.moveToFirst(); !personCursor.isAfterLast(); personCursor.moveToNext()){
+                    //Log.e(TAG, "test:"+personCursor.getString(1));
+                    personConcate.append(personCursor.getString(1) + " ");
+
+                }
+                personList[i] = personConcate.toString();
+
+            }else{
+                personList[i] = null;
+            }
         }
-
+        // Set the adapter
         mRecyclerView = (RecyclerView) view.findViewById(R.id.list);
-        //Context context = view.getContext();
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
-
-        mRecyclerView.setAdapter(new MyItemRecyclerViewAdapter(events,typeNames));
+        mRecyclerView.setAdapter(new MyItemRecyclerViewAdapter(events,typeNames,personList));
 
         return view;
     }
@@ -98,14 +119,6 @@ public class ItemFragment extends Fragment {
         } else {
             throw new RuntimeException(activity.toString()
                     + " must implement OnListFragmentInteractionListener");
-        }
-    }
-
-    @Override
-    public void onPause() {
-        super.onPause();
-        if(launcher!=null){
-            launcher.goFragment(LauncherFragment.tag);
         }
     }
 

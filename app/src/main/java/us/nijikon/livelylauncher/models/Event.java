@@ -16,9 +16,10 @@ public class Event implements Parcelable {
     int remindBefore;
     List<Person> contactPerson=null;
     String note=null;
+    long rowId;
 
 
-    public static final Creator<Event> CREATOR = new Creator<Event>() {
+    public static final Parcelable.Creator<Event> CREATOR = new Parcelable.Creator<Event>() {
         public Event createFromParcel(Parcel p) {
             return new Event(p);
         }
@@ -39,7 +40,7 @@ public class Event implements Parcelable {
         remindBefore = 0;
     }
 
-    public Event(int eventId,String date, String note, int remindBefore, List<Person> contactPerson, Type type) {
+    public Event(int eventId, String date, String note, int remindBefore, List<Person> contactPerson, Type type) {
 
         this.eventId = eventId;
         this.date = date;
@@ -85,6 +86,10 @@ public class Event implements Parcelable {
         return remindBefore;
     }
 
+    public long getRowId() {
+        return rowId;
+    }
+
     //Setter
     public void setEventId(int eventId) {
         this.eventId = eventId;
@@ -101,6 +106,10 @@ public class Event implements Parcelable {
 
     public void setNote(String note) {
         this.note = note;
+    }
+
+    public void setRowId(long row) {
+        this.rowId = row;
     }
 
 //    public void setRemindType(int remindType) {

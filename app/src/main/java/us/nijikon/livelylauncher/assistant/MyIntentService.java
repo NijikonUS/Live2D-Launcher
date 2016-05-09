@@ -8,6 +8,7 @@ import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.support.v4.app.NotificationCompat;
+import android.util.Log;
 
 import java.util.Date;
 
@@ -26,8 +27,12 @@ public class MyIntentService extends IntentService {
     // IntentService can perform, e.g. ACTION_FETCH_NEW_ITEMS
     private static final String ACTION_FOO = "us.nijikon.livelylauncher.action.FOO";
     private static final String ACTION_BAZ = "us.nijikon.livelylauncher.action.BAZ";
+    private static final String TAG = ".MyIntentService";
     private static final int POLL_INTERVAL = 100 * 10;
-    private static String phone;
+    private static String[] phone;
+    private static String[] personName;
+    private static String text;
+    private static long rowId;
 
     // TODO: Rename parameters
     private static final String EXTRA_PARAM1 = "us.nijikon.livelylauncher.extra.PARAM1";
@@ -69,33 +74,28 @@ public class MyIntentService extends IntentService {
 
     @Override
     protected void onHandleIntent(Intent intent) {
-//        if (intent != null) {
-////            final String action = intent.getAction();
-////            if (ACTION_FOO.equals(action)) {
-////                final String param1 = intent.getStringExtra(EXTRA_PARAM1);
-////                final String param2 = intent.getStringExtra(EXTRA_PARAM2);
-////                handleActionFoo(param1, param2);
-////            } else if (ACTION_BAZ.equals(action)) {
-////                final String param1 = intent.getStringExtra(EXTRA_PARAM1);
-////                final String param2 = intent.getStringExtra(EXTRA_PARAM2);
-////                handleActionBaz(param1, param2);
-////            }
-//        }
 
-        //Resources r = getResources();
         Intent in = new Intent(this,PendingIntentActivity.class);
         in.putExtra("key",phone);
+        Log.e(TAG, "phone:" + phone);
+        in.putExtra("name",personName);
+        Log.e(TAG, "name:" + personName);
+        in.putExtra("text",text);
+        Log.e(TAG, "text:" + text);
+        in.putExtra("rowId", rowId);
+        Log.e(TAG, "rowId:" + rowId);
 
-        PendingIntent pi = PendingIntent.getActivity(this, 0, in, PendingIntent.FLAG_ONE_SHOT);
+        PendingIntent pi = PendingIntent.getActivity(this, (int) rowId, in, 0);
 
-        Notification notification = new NotificationCompat.Builder(this).setTicker("Event Alert")
-                .setSmallIcon(R.drawable.contact).setContentTitle("Event Alert").setContentText("New coming event")
+        Notification notification = new NotificationCompat.Builder(this).setTicker("Event Notify")
+                .setSmallIcon(R.drawable.contact).setContentTitle("Remind From Assistant").setContentText("New coming event")
                 .setContentIntent(pi).setAutoCancel(true).build();
+
         notification.defaults |= Notification.DEFAULT_VIBRATE;
         notification.defaults |= Notification.DEFAULT_SOUND;
 
         NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-        notificationManager.notify(0, notification);
+        notificationManager.notify((int)rowId, notification);
 
     }
 
@@ -118,12 +118,28 @@ public class MyIntentService extends IntentService {
     }
 
     public static void setServiceAlarm(Context context, boolean isOn, Date date, Event event){
+
         if(event.getContactPerson()!=null){
-            phone = event.getContactPerson().get(0).getPhoneNumber();
+            int personCount = event.getContactPerson().size();
+            phone = new String[personCount];
+            personName = new String[personCount];
+            for(int i=0; i<personCount; i++){
+
+                Log.e(TAG, "PERSON:" + event.getContactPerson().size());
+                Log.e(TAG, "PERSON:" + event.getContactPerson().get(i).getPhoneNumber());
+                phone[i] = event.getContactPerson().get(i).getPhoneNumber();
+                personName[i] = event.getContactPerson().get(i).getName();
+            }
+
+            if(!event.getType().getCategoryName().equals("Contact")){
+                text = "SMS";
+            }
         }
 
+        rowId = event.getRowId();
+
         Intent i = new Intent(context, MyIntentService.class);
-        PendingIntent pi = PendingIntent.getService(context, 0, i, 0);
+        PendingIntent pi = PendingIntent.getService(context, (int) rowId, i, 0);
 
         AlarmManager alarmManager = (AlarmManager)
                 context.getSystemService(Context.ALARM_SERVICE);

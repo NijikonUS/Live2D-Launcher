@@ -64,7 +64,7 @@ public class FileManager {
 	}
 
 
-	public static InputStream open( String path  ) throws IOException {
+	public static InputStream open(String path) throws IOException {
 		return open(path,false);
 	}
 

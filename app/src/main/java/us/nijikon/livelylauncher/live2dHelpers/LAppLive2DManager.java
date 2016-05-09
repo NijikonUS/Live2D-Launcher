@@ -6,8 +6,12 @@ package us.nijikon.livelylauncher.live2dHelpers;
 import android.app.Activity;
 import android.app.Application;
 import android.app.LauncherActivity;
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.util.Log;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 
 import javax.microedition.khronos.opengles.GL10;
@@ -15,6 +19,8 @@ import javax.microedition.khronos.opengles.GL10;
 import jp.live2d.Live2D;
 import jp.live2d.framework.L2DViewMatrix;
 import jp.live2d.framework.Live2DFramework;
+import jp.live2d.utils.android.SimpleImage;
+import us.nijikon.livelylauncher.R;
 import us.nijikon.livelylauncher.launcher.Launcher;
 
 
@@ -23,34 +29,38 @@ public class LAppLive2DManager
 	
 	static public final String TAG = "SampleLive2DManager";
 
-	private LAppView 				view;						
 
+
+	private LAppView view;
 	
 	private LAppModel model;
 
-
-	
-//	private int 					modelCount		=-1;
-	private boolean 				reloadFlg;
+	private boolean reloadFlg;
 
 
+
+	public void updateBackground(String path, boolean inapp){
+		LAppDefine.back_image_path = path;
+		LAppDefine.inApp =inapp;
+		try {
+			this.view.getRenderer().getBackground().setInput(path);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
 
 	public LAppLive2DManager()
 	{
 		Live2D.init();
 		Live2DFramework.setPlatformManager(new PlatformManager());
 		model = new LAppModel();
-
 	}
-
 
 	public void releaseModel()
 	{
 		model.release();
 	}
 
-
-	
 	public void update(GL10 gl) {
 		view.update();
 		if (reloadFlg){
@@ -70,16 +80,11 @@ public class LAppLive2DManager
 		return model;
 	}
 
-
-
-	//=========================================================
-	
-	//=========================================================
 	
 	public LAppView  createView(Activity act)
 	{
 		
-		view = new LAppView( act ) ;
+		view = new LAppView(act) ;
 		view.setLive2DManager(this);
 		view.startAccel(act);
 		return view ;
@@ -106,8 +111,10 @@ public class LAppLive2DManager
 	public void onSurfaceChanged(GL10 gl, int width, int height)
 	{
 		if(LAppDefine.DEBUG_LOG) Log.d(TAG, "onSurfaceChanged " + width + " " + height);
-		view.setupView(width,height);
+		view.setupView(width, height);
 		changeModel();
+
+		//view.update();
 	}
 
 
@@ -117,7 +124,7 @@ public class LAppLive2DManager
 	
 	public void changeModel()
 	{
-		reloadFlg=true;
+		reloadFlg = true;
 
 	}
 
@@ -139,6 +146,26 @@ public class LAppLive2DManager
 				model.startRandomMotion(LAppDefine.MOTION_SHY, LAppDefine.PRIORITY_FORCE );
 			}
 		return true;
+	}
+
+	public static void readWallPaper(Context context){
+		SharedPreferences sharedPreferences = context.getSharedPreferences("LIVELYLAUNCHER_WALLPAPPER", Context.MODE_PRIVATE);
+		String path = sharedPreferences.getString("LivelyLauncherWallPath", LAppDefine.back_image_path);
+		boolean inApp = sharedPreferences.getBoolean("LivelyLauncherWalInApp",true);
+		if(path!=null){
+			LAppDefine.back_image_path=path;
+			LAppDefine.inApp = inApp;
+		}else{
+			LAppDefine.back_image_path = "walltest.png";
+			LAppDefine.inApp = true;
+		}
+	}
+
+	public static void writeWallPaper(Context context){
+		SharedPreferences.Editor editor = context.getSharedPreferences("LIVELYLAUNCHER_WALLPAPPER",Context.MODE_PRIVATE).edit();
+		editor.putString("LivelyLauncherWallPath",LAppDefine.back_image_path);
+		editor.putBoolean("LivelyLauncherWalInApp", LAppDefine.inApp);
+		editor.apply();
 	}
 
 	
@@ -166,8 +193,9 @@ public class LAppLive2DManager
 	public void shakeEvent()
 	{
 		if(LAppDefine.DEBUG_LOG) Log.d(TAG, "Shake event.");
-		model.startRandomMotion(LAppDefine.MOTION_NULL,LAppDefine.PRIORITY_FORCE);
+		model.startRandomMotion(LAppDefine.MOTION_SHAKE,LAppDefine.PRIORITY_FORCE);
 	}
+
 
 	public void setAccel(float x,float y,float z)
 	{

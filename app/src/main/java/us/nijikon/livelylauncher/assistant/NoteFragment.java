@@ -61,7 +61,7 @@ public class NoteFragment extends Fragment {
                 Log.e("check", note);
                 callback.saveNote(note);
 
-                ((Launcher) getActivity()).goFragment(NoteFragment.tag);
+                ((Launcher) getActivity()).goFragment(RemindFragment.tag);
 
             }
         });

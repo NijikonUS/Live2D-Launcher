@@ -28,9 +28,9 @@ public class LivelyLauncherDB extends SQLiteOpenHelper {
     private static final String TABLE_EVENT = "event";
     private static final String COLUMN_EVENT_ID = "id";
     private static final String COLUMN_EVENT_NOTE = "note";
-    //private static final String COLUMN_EVENT_REMIND = "remindType";
     private static final String COLUMN_EVENT_DATE = "date";
     private static final String COLUMN_EVENT_REMIND_BEFORE = "remind_before";
+    private static final String COLUMN_EVENT_ROW_NUMBER = "row_number";
 
     //column of person
     private static final String TABLE_PERSON = "person";
@@ -56,8 +56,9 @@ public class LivelyLauncherDB extends SQLiteOpenHelper {
         sqLiteDatabase.execSQL("create table " + TABLE_EVENT + "(" + COLUMN_EVENT_ID + " integer primary key autoincrement, "
                 + COLUMN_EVENT_NOTE + " text, "
                 //+ COLUMN_EVENT_REMIND + " integer, "
-                + COLUMN_EVENT_DATE + " real, "
-                + COLUMN_EVENT_REMIND_BEFORE + " integer)");
+                + COLUMN_EVENT_DATE + " text, "
+                + COLUMN_EVENT_REMIND_BEFORE + " integer, "
+                + COLUMN_EVENT_ROW_NUMBER + " real)");
 
         Log.i(DATABASE_NAME, "finish create table");
 
@@ -91,11 +92,20 @@ public class LivelyLauncherDB extends SQLiteOpenHelper {
         cv.put(COLUMN_EVENT_NOTE, event.getNote());
         cv.put(COLUMN_EVENT_DATE, event.getDate());
         cv.put(COLUMN_EVENT_REMIND_BEFORE, event.getRemindBefore());
-        return getWritableDatabase().insert(TABLE_EVENT,null,cv);
+        long rowNumber = getWritableDatabase().insert(TABLE_EVENT,null,cv);
+
+//        ContentValues cv2 = new ContentValues();
+//        cv2.put(COLUMN_EVENT_NOTE, event.getNote());
+//        cv2.put(COLUMN_EVENT_DATE, event.getDate());
+//        cv2.put(COLUMN_EVENT_REMIND_BEFORE, event.getRemindBefore());
+//        cv2.put(COLUMN_EVENT_ROW_NUMBER, rowNumber);
+//        getReadableDatabase().update(TABLE_EVENT, cv2, " where " + COLUMN_EVENT_DATE + "=" + event.getDate(), null);
+        return rowNumber;
 
     }
 
-    public long insertPerson(long eventId, Person person){
+
+    public long insertPerson(int eventId, Person person){
 
         ContentValues cv = new ContentValues();
         cv.put(COLUMN_PERSON_EVENTID, eventId);
@@ -127,7 +137,7 @@ public class LivelyLauncherDB extends SQLiteOpenHelper {
 
     public Cursor queryDatabase(int id){
         Cursor c = getReadableDatabase().rawQuery("select * from " + TABLE_EVENT
-                + " where " + COLUMN_EVENT_ID + "=" + Integer.toString(id)
+                    + " where " + COLUMN_EVENT_ID + "=" + Integer.toString(id)
                 , null);
         return c;
     }
@@ -156,7 +166,7 @@ public class LivelyLauncherDB extends SQLiteOpenHelper {
     }
 
     public ArrayList<Event> getAllEvents() {
-        ArrayList<Event> eventLists = new ArrayList<Event>();
+        ArrayList<Event> eventLists = new ArrayList<>();
         SQLiteDatabase db = this.getReadableDatabase();
         Cursor cursor = db.rawQuery("select * from " + TABLE_EVENT, null);
         // loop through all query results
@@ -166,6 +176,7 @@ public class LivelyLauncherDB extends SQLiteOpenHelper {
             event.setNote(cursor.getString(1));
             event.setDate(cursor.getString(2));
             event.setRemindBefore(cursor.getInt(3));
+            //event.setRowId(cursor.getLong(4));
             eventLists.add(event);
 
         }
@@ -185,6 +196,11 @@ public class LivelyLauncherDB extends SQLiteOpenHelper {
 
         }
         return typeLists;
+    }
+
+    public Cursor getLatestCursor(){
+        String sql ="select "+ COLUMN_EVENT_ID+ " from "+ TABLE_EVENT+ " order by "+ COLUMN_EVENT_ID+ " DESC limit 1";
+        return getReadableDatabase().rawQuery(sql,null,null);
     }
 
 

@@ -80,8 +80,8 @@ public class ShowContactFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 finishChoice();
-                if(launcher.sevent!=null){
-                    launcher.sevent.setContactPerson(new ArrayList<Person>(adapter.getResult().values()));
+                if(launcher.event!=null){
+                    launcher.event.setContactPerson(new ArrayList<Person>(adapter.getResult().values()));
                 }
                 launcher.goFragment(NoteFragment.tag);
             }

@@ -1,5 +1,8 @@
 package us.nijikon.livelylauncher.adapters;
 
+import android.app.AlertDialog;
+import android.app.DialogFragment;
+import android.content.DialogInterface;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -7,20 +10,13 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-
 import java.util.List;
-
+import us.nijikon.livelylauncher.assistant.CategoryFragment;
 import us.nijikon.livelylauncher.R;
-import us.nijikon.livelylauncher.assistant.CategoryFragment;
-import us.nijikon.livelylauncher.assistant.CategoryFragment;
-import us.nijikon.livelylauncher.assistant.NoteFragment;
 import us.nijikon.livelylauncher.assistant.NoteFragment;
 import us.nijikon.livelylauncher.assistant.ShowContactFragment;
 import us.nijikon.livelylauncher.launcher.Launcher;
 import us.nijikon.livelylauncher.models.Event;
-
-//import us.nijikon.livelylauncher.assistant.AssistActivity;
-//import us.nijikon.livelylauncher.assistant.ContactActivity;
 
 /**
  * Created by mjwei on 3/24/16.
@@ -78,22 +74,36 @@ public class CategoryAdapter extends RecyclerView.Adapter<CategoryAdapter.ViewHo
 
         holder.cv.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v) {
+            public void onClick(final View v) {
 
                 typeName = mDataset.get(position);
                 category.setCategoryName(typeName);
-                Log.e("type:", typeName);
+                Log.e("type:",typeName);
 
                 switch(position){
                     case 0:{
-//                        Intent intent = new Intent(v.getContext(), ContactActivity.class);
-//                        v.getContext().startActivity(intent);
-
+                        //contact fragment
                         ((Launcher)v.getContext()).goFragment(ShowContactFragment.tag);
+                        Log.e("select:", "contact !");
                         break;
                     }
                     default:{
-                        ((Launcher)v.getContext()).goFragment(NoteFragment.tag);
+                        DialogFragment dialogFragment = new DialogFragment();
+
+                        new AlertDialog.Builder(v.getContext()).setTitle("Do you want to invite your friends?")
+                                .setNegativeButton("No", new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        ((Launcher)v.getContext()).goFragment(NoteFragment.tag);
+                                    }
+                                }).setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                //
+                                ((Launcher)v.getContext()).goFragment(ShowContactFragment.tag);
+                            }
+                        }).create().show();
+
                         break;
                     }
                 }
@@ -109,4 +119,6 @@ public class CategoryAdapter extends RecyclerView.Adapter<CategoryAdapter.ViewHo
     public int getItemCount() {
         return mDataset.size();
     }
+
+
 }

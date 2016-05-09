@@ -7,12 +7,15 @@
  */
 package jp.live2d.utils.android;
 
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.FloatBuffer;
 import java.nio.ShortBuffer;
 
 import javax.microedition.khronos.opengles.GL10;
+
+import us.nijikon.livelylauncher.live2dHelpers.LAppDefine;
 
 
 public class SimpleImage {
@@ -33,15 +36,26 @@ public class SimpleImage {
 
 	private int texture;
 
+	private String in;
+	private GL10 innerGl;
 
-	public SimpleImage(GL10 gl,InputStream in) {
+	private boolean ifChanged = false;
+
+	public SimpleImage(GL10 gl,String in) {
+		this.in=in;
+		innerGl = gl;
+
 		try {
-			texture= LoadUtil.loadTexture(gl, in, true);
+			if(LAppDefine.inApp) {
+				texture = LoadUtil.loadTexture(gl, FileManager.open("image/"+ in), true);
+			}else {
+				texture = LoadUtil.loadTexture(gl, new FileInputStream(in),true);
+			}
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
 
-		
+
 		this.uvLeft=0;
 		this.uvRight=1;
 		this.uvBottom=0;
@@ -53,25 +67,43 @@ public class SimpleImage {
 		this.imageTop=1;
 	}
 
+//	/* bo wang*/
+	public void setInput(String in) throws IOException {
+		this.in = in;
+		ifChanged = true;
+
+	}
+
 
 	public void draw(GL10 gl){
+		if(ifChanged) {
+			ifChanged = false;
+			try {
+				if(LAppDefine.inApp) {
+					texture = LoadUtil.loadTexture(gl, FileManager.open("image/"+ in), true);
+				}else {
+					texture = LoadUtil.loadTexture(gl, new FileInputStream(in),true);
+				}
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
 		float uv[] = { uvLeft ,uvBottom,uvRight  ,uvBottom, uvRight, uvTop, uvLeft,uvTop} ;
 		float ver[] = { imageLeft , imageTop   , imageRight     , imageTop , imageRight      , imageBottom     , imageLeft , imageBottom } ;
-		short index[] = {0,1,2 , 0,2,3} ;
-
+		short index[] =  {0,1,2, 0,2,3};
 		drawImageBufferUv = BufferUtil.setupFloatBuffer(drawImageBufferUv, uv) ;
 		drawImageBufferVer = BufferUtil.setupFloatBuffer(drawImageBufferVer, ver) ;
 		drawImageBufferIndex = BufferUtil.setupShortBuffer(drawImageBufferIndex, index) ;
 
-		gl.glTexCoordPointer( 2, GL10.GL_FLOAT , 0 , drawImageBufferUv ) ;
-		gl.glVertexPointer( 2 , GL10.GL_FLOAT , 0 , drawImageBufferVer ) ;
+		gl.glTexCoordPointer(2, GL10.GL_FLOAT, 0, drawImageBufferUv) ;
+		gl.glVertexPointer(2, GL10.GL_FLOAT, 0, drawImageBufferVer) ;
 		gl.glBindTexture(GL10.GL_TEXTURE_2D , texture ) ;
 
 		gl.glDrawElements( GL10.GL_TRIANGLES, 6 , GL10.GL_UNSIGNED_SHORT , drawImageBufferIndex ) ;
 	}
 
 
-	
+
 	public void setDrawRect(float left, float right, float bottom, float top) {
 		this.imageLeft=left;
 		this.imageRight=right;
@@ -80,7 +112,7 @@ public class SimpleImage {
 	}
 
 
-	
+
 	public void setUVRect(float left, float right, float bottom, float top) {
 		this.uvLeft=left;
 		this.uvRight=right;

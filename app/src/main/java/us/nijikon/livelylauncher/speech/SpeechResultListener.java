@@ -5,5 +5,5 @@ package us.nijikon.livelylauncher.speech;
  */
 public interface SpeechResultListener {
 
-    public void handleResult(String response);
+    public void handleResult(String query, String content, String response);
 }
