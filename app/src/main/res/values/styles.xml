@@ -5,4 +5,8 @@
         <!-- Customize your theme here. -->
     </style>
 
+    <style name="background_white">
+        <item name="android:background">#FFFFFF</item>
+    </style>
+
 </resources>

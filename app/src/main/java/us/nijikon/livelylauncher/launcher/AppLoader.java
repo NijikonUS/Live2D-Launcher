@@ -48,4 +48,6 @@ public class AppLoader extends AsyncTaskLoader<AppDataHolder> {
         forceLoad();
     }
 
+
+
 }

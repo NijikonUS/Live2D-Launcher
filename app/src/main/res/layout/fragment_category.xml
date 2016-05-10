@@ -17,34 +17,59 @@
     </android.support.v7.widget.RecyclerView>
 
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceMedium"
-        android:text="Add New"
-        android:id="@+id/textView"
-        android:layout_above="@+id/edit"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentEnd="true"
-        android:layout_alignLeft="@+id/edit"
-        />
+    <!--<TextView-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:textAppearance="?android:attr/textAppearanceMedium"-->
+        <!--android:text="Add New"-->
+        <!--android:id="@+id/textView"-->
+        <!--android:layout_above="@+id/edit"-->
+        <!--android:layout_alignParentRight="true"-->
+        <!--android:layout_alignParentEnd="true"-->
+        <!--android:layout_alignLeft="@+id/edit"-->
+        <!--/>-->
+    <!--<EditText-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:hint="key-in here"-->
+        <!--android:id="@+id/edit"-->
+        <!--android:layout_above="@+id/next"-->
+        <!--android:layout_alignParentRight="true"-->
+        <!--android:layout_alignParentEnd="true"/>-->
+
+    <!--<Button-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:text="Add"-->
+        <!--android:id="@+id/next"-->
+        <!--android:layout_alignParentBottom="true"-->
+        <!--android:layout_alignParentRight="true"-->
+        <!--android:layout_alignParentEnd="true" />-->
+    <LinearLayout
+    android:layout_width="match_parent"
+    android:layout_height="50dp"
+    android:layout_alignParentBottom="true"
+    android:orientation="horizontal"
+    android:gravity="center_horizontal">
+
     <EditText
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:hint="key-in here"
-        android:id="@+id/edit"
-        android:layout_above="@+id/next"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentEnd="true"/>
+        android:padding="5dp"
+        android:layout_width="300dp"
+        android:layout_height="match_parent"
+        android:hint="add new category here"
+        android:background="@drawable/input_border"
+        style="@style/background_white"
+        android:id="@+id/edit"/>
 
     <Button
-        android:layout_width="wrap_content"
+        android:layout_margin="5dp"
+        android:layout_gravity="center"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Add"
-        android:id="@+id/next"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentEnd="true" />
+        android:background="@drawable/submit_button"
+        android:id="@+id/next"/>
+</LinearLayout>
 
 
 </RelativeLayout>

@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ripple xmlns:android="http://schemas.android.com/apk/res/android"
+    android:color="#50000000">
+
+    <!--<item android:state_pressed="true">-->
+    <!--<shape>-->
+    <!--&lt;!&ndash;色值&ndash;&gt;-->
+    <!--<solid android:color="@color/press_submit" />-->
+    <!--&lt;!&ndash;圆角&ndash;&gt;-->
+    <!--<corners android:radius="10dp" />-->
+    <!--</shape>-->
+    <!--</item>-->
+
+    <item >
+        <shape>
+            <solid android:color="@color/blue" />
+            <corners android:radius="10dp" />
+            <stroke android:width="2dp" android:color="@color/item_border"/>
+        </shape>
+
+    </item>
+
+</ripple>

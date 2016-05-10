@@ -7,7 +7,9 @@ import android.app.FragmentTransaction;
 import android.app.LoaderManager;
 import android.content.Loader;
 import android.database.Cursor;
+import android.os.AsyncTask;
 import android.os.Bundle;
+import android.provider.ContactsContract;
 import android.util.Log;
 import android.view.ViewGroup;
 import android.view.WindowManager;
@@ -17,6 +19,7 @@ import android.widget.Toast;
 
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 
 import jp.live2d.utils.android.FileManager;
@@ -59,8 +62,9 @@ public class Launcher extends Activity implements LoaderManager.LoaderCallbacks<
     private ItemFragment itemFragment;
     private ShowContactFragment showContactFragment;
     private WeatherFragment weatherFragment;
+    private WallPaperFragment wallPaperFragment;
     private Weather currentWeather;
-
+    private HashMap<String, String> simpleContactInfo;
 
     private int usableHeight;
     private int usableWidth;
@@ -68,7 +72,9 @@ public class Launcher extends Activity implements LoaderManager.LoaderCallbacks<
     public Event event;
     Date date;
 
-
+    public HashMap<String, String> getSimpleContactInfo() {
+        return simpleContactInfo;
+    }
 
     public LAppLive2DManager getLive2DMgr() {
         return live2DMgr;
@@ -101,11 +107,16 @@ public class Launcher extends Activity implements LoaderManager.LoaderCallbacks<
                         // leave appFragment
                         //getFragmentManager().popBackStack(AppFragment.tag,FragmentManager.POP_BACK_STACK_INCLUSIVE);
                         transaction.setCustomAnimations(R.animator.fade_in, R.animator.left_out);
+                        transaction.hide(currentFragment).show(launcherFragment);
+                    } else if(currentFragment instanceof LauncherFragment){
+                        // do nothing
+                        return currentFragment;
                     } else {
                         // leave assistant fragments
-                        transaction.setCustomAnimations(R.animator.left_in, R.animator.right_out);
+                        transaction.setCustomAnimations(R.animator.fade_in, R.animator.fade_out);
+                        transaction.hide(currentFragment).show(launcherFragment);
                     }
-                    transaction.show(launcherFragment).hide(currentFragment);
+
                 }else {
                     transaction.show(launcherFragment);
                 }
@@ -207,6 +218,7 @@ public class Launcher extends Activity implements LoaderManager.LoaderCallbacks<
                 }
                 transaction.show(itemFragment).commit();
                 currentFragment = itemFragment;
+
                 break;
 
             case ShowContactFragment.tag:
@@ -229,12 +241,23 @@ public class Launcher extends Activity implements LoaderManager.LoaderCallbacks<
                 if(!weatherFragment.isAdded()){
                     transaction.add(R.id.hookView,weatherFragment);
                 }
-                transaction.addToBackStack(WeatherFragment.tag);
+                //transaction.addToBackStack(WeatherFragment.tag);
                 transaction.hide(currentFragment);
                 transaction.commit();
-                return weatherFragment;
-
-
+                currentFragment =  weatherFragment;
+                break;
+            case WallPaperFragment.tag:
+                if(wallPaperFragment == null){
+                    wallPaperFragment = new WallPaperFragment().setParent(this);
+                }
+                if(!wallPaperFragment.isAdded()){
+                    transaction.add(R.id.main, wallPaperFragment);
+                }
+                transaction.show(wallPaperFragment);
+                transaction.hide(currentFragment);
+                transaction.commit();
+                currentFragment = wallPaperFragment;
+                break;
         }
         return currentFragment;
     }
@@ -269,6 +292,8 @@ public class Launcher extends Activity implements LoaderManager.LoaderCallbacks<
         setupGUI();
         FileManager.init(this.getApplicationContext());
 
+        //prepare data
+        new SimpleContactInfoTask().execute();
         // go
        // this.goFragment(LauncherFragment.tag);
         //fragmentManager.beginTransaction().add(R.id.main, launcherFragment).add(R.id.main, appFragment).hide(appFragment).hide(launcherFragment).commit();
@@ -278,17 +303,31 @@ public class Launcher extends Activity implements LoaderManager.LoaderCallbacks<
     public void onResume() {
         super.onResume();
         Log.d("LAUCNHER ACTIVITY", "ON RESUME");
-        if(currentFragment == null) {
+        //if(currentFragment == null) {
             this.goFragment(LauncherFragment.tag);
-        }
+        //}
     }
 
     @Override
     public void onBackPressed(){
         //super.onBackPressed();
-        if(currentFragment instanceof AppFragment){
+        if(currentFragment instanceof WallPaperFragment){
+            getFragmentManager().beginTransaction().remove(currentFragment).commit();
+            wallPaperFragment = null;
+        }
+        if(currentFragment instanceof WeatherFragment){
+            getFragmentManager().beginTransaction().remove(currentFragment).commit();
+            weatherFragment = null;
+        }
+        if(!(currentFragment instanceof LauncherFragment)){
             goFragment(LauncherFragment.tag);
         }
+       // categoryFragment = null;
+        //noteFragment = null;
+        //timeSelectFragment = null;
+        //remindFragment = null;
+        itemFragment = null;
+
     }
 
 
@@ -423,4 +462,89 @@ public class Launcher extends Activity implements LoaderManager.LoaderCallbacks<
     public void testAlerm(Date date, Event event){
         MyIntentService.setServiceAlarm(this, true, date, event);
     }
+
+
+    //pre load contacts info
+    public HashMap<String,String> getContactInform(){
+        HashMap<String,String> res = new HashMap<>();
+        final Cursor c = this.getContentResolver().query(ContactsContract.Contacts.CONTENT_URI, null, null, null, null);
+        for (c.moveToFirst(); !c.isAfterLast(); c.moveToNext()) {
+
+            String t = c.getString(c.getColumnIndex(ContactsContract.Contacts._ID));
+            final Cursor pCur = this.getContentResolver().query(ContactsContract.CommonDataKinds.Phone.CONTENT_URI, null, ContactsContract.CommonDataKinds.Phone.CONTACT_ID + " = " + t, null, null);
+            String phone = "";
+            while (pCur.moveToNext()) {
+                int code = Integer.valueOf(pCur.getString(pCur.getColumnIndex(ContactsContract.CommonDataKinds.Phone.TYPE)));
+                switch(code){
+                    case 1://Home
+                        phone = pCur.getString(pCur.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER));
+                        //Log.e("checkPhone1:", phone);
+                        break;
+                    case 2://Mobile
+                        phone = pCur.getString(pCur.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER));
+                        //Log.e("checkPhone2:", phone);
+                        break;
+                    case 3://Work
+                        phone = pCur.getString(pCur.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER));
+                        //Log.e("checkPhone3:", phone);
+                        break;
+                }
+            }
+            pCur.close();
+            res.put(c.getString(0).toLowerCase(),phone.toLowerCase());
+        }
+        return res;
+    }
+
+    private class SimpleContactInfoTask extends AsyncTask<Void,Void,HashMap<String,String>>{
+
+        @Override
+        protected HashMap<String, String> doInBackground(Void... params) {
+            return getContactInform();
+        }
+
+        @Override
+        protected void onPostExecute(HashMap<String, String> v){
+            simpleContactInfo = v;
+            Log.d("laod contact","done");
+        }
+    }
+
+
+    public void saveToDatebase(Event event) {
+        if(event == null) return;
+        LivelyLauncherDB db = new LivelyLauncherDB(this);
+
+        long insertEventId = db.insertEvent(event);
+        event.setRowId(insertEventId);
+
+        long id = db.insertType(insertEventId,event.getType());
+
+        Log.e(TAG, "insertDB:" + event.getDate() + "/" + event.getRowId() + "/" + event.getType().getCategoryName() + "/" + event.getRemindBefore());
+
+        if(event.getType().getCategoryName().equals("Contact") && event.getContactPerson()!=null){
+            Cursor c = db.getLatestCursor();
+            c.moveToFirst();
+            int queryId = c.getInt(0);
+            Log.e(TAG,"queryId:"+queryId);
+
+            for(int i =0; i<event.getContactPerson().size(); i++){
+                db.insertPerson(queryId, event.getContactPerson().get(i));
+                Log.e(TAG,"insert person:"+event.getContactPerson().get(i).getName());
+            }
+        }
+
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(date);
+        calendar.add(Calendar.MINUTE, -5);
+        long alermTime = calendar.getTime().getTime();
+
+        testAlerm(new Date(alermTime), event);
+        db.close();
+    }
+
+    public void setDate(Date date){
+        this.date = date;
+    }
+
 }

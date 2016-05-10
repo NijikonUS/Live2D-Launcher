@@ -66,7 +66,7 @@ public class RemindFragment extends Fragment {
         bt_30 = (Button)v.findViewById(R.id.bt_30);
         bt_60 = (Button)v.findViewById(R.id.bt_60);
         confirm = (Button)v.findViewById(R.id.confirm);
-        add = (Button)v.findViewById(R.id.add);
+       // add = (Button)v.findViewById(R.id.add);
         //default unclickable
         bt_0.setVisibility(View.INVISIBLE);
         bt_10.setVisibility(View.INVISIBLE);
@@ -154,16 +154,16 @@ public class RemindFragment extends Fragment {
             }
         });
 
-        add.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                callback.saveRemind(remindBefore);
-                // ((AssistActivity)getActivity()).backToSelectTime(v);
-//                Intent intent = new Intent(v.getContext(), TimeSelect.class);
-//                v.getContext().startActivity(intent);
-
-            }
-        });
+//        add.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                callback.saveRemind(remindBefore);
+//                // ((AssistActivity)getActivity()).backToSelectTime(v);
+////                Intent intent = new Intent(v.getContext(), TimeSelect.class);
+////                v.getContext().startActivity(intent);
+//
+//            }
+//        });
 
         return v;
     }

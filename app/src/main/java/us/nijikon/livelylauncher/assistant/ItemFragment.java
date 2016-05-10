@@ -15,6 +15,8 @@ import android.widget.Button;
 import android.widget.LinearLayout;
 
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 import us.nijikon.livelylauncher.dao.LivelyLauncherDB;
@@ -60,52 +62,64 @@ public class ItemFragment extends Fragment {
 
     }
 
-    @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_item_list, container, false);
-//        Button home = (Button)view.findViewById(R.id.home);
-//        home.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                Intent intent = new Intent(v.getContext(),AssistActivity.class);
-//                v.getContext().startActivity(intent);
-//            }
-//        });
 
         // Query database
         LivelyLauncherDB db = new LivelyLauncherDB(getActivity());
+       // events = new ArrayList<>();
+
         events = db.getAllEvents();
-        Log.e(TAG, "store events:"+events.get(0).getNote());
 
-        typeNames = new ArrayList<>();
-        personList = new String[events.size()];
+        //Log.e(TAG, "store events:"+events.get(0).getNote());
+            typeNames = new ArrayList<>();
+            personList = new String[events.size()];
+            List<Event> filteredEvent = new ArrayList<>();
 
-        for(int i = 0;i<events.size();i++){
-            Cursor c = db.queryDatabaseType(events.get(i).getEventId());
-            c.moveToFirst();
-            String typeName = c.getString(1);
-            typeNames.add(typeName);
-            Log.e(TAG, typeNames.get(i));
+            for (int i = 0; i < events.size(); i++) {
+                Cursor c = db.queryDatabaseType(events.get(i).getEventId());
+                c.moveToFirst();
+                String typeName = c.getString(1);
+                typeNames.add(typeName);
+                Log.e(TAG, typeNames.get(i));
+                //only preserve events passed within 1 hours and future events
+                Calendar calendar = Calendar.getInstance();
+                String date = events.get(i).getDate();
+                if (date == null) {
+                    calendar.setTime(new Date());
 
-            if(typeName.equals("Contact")){
-                StringBuilder personConcate = new StringBuilder();
-                Cursor personCursor = db.queryDatabasePerson(events.get(i).getEventId());
-                for (personCursor.moveToFirst(); !personCursor.isAfterLast(); personCursor.moveToNext()){
-                    //Log.e(TAG, "test:"+personCursor.getString(1));
-                    personConcate.append(personCursor.getString(1) + " ");
-
+                    if (new Date().getHours() + 1 >= new Date().getHours() && Calendar.getInstance().getTime().getDay() >= calendar.getTime().getDay()) {
+                        filteredEvent.add(events.get(i));
+                    }
                 }
-                personList[i] = personConcate.toString();
+                else {
+                    calendar.setTime(new Date(events.get(i).getDate()));
 
-            }else{
-                personList[i] = null;
+                    if (new Date(events.get(i).getDate()).getHours() + 1 >= new Date().getHours() && Calendar.getInstance().getTime().getDay() >= calendar.getTime().getDay()) {
+                        filteredEvent.add(events.get(i));
+                    }
+                }
+                //calendar.add(Calendar.HOUR_OF_DAY,-1);
+
+                if (typeName.equals("Contact")) {
+                    StringBuilder personConcate = new StringBuilder();
+                    Cursor personCursor = db.queryDatabasePerson(events.get(i).getEventId());
+                    for (personCursor.moveToFirst(); !personCursor.isAfterLast(); personCursor.moveToNext()) {
+                        //Log.e(TAG, "test:"+personCursor.getString(1));
+                        personConcate.append(personCursor.getString(1) + " ");
+
+                    }
+                    personList[i] = personConcate.toString();
+
+                } else {
+                    personList[i] = null;
+                }
             }
-        }
-        // Set the adapter
-        mRecyclerView = (RecyclerView) view.findViewById(R.id.list);
-        mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
-        mRecyclerView.setAdapter(new MyItemRecyclerViewAdapter(events,typeNames,personList));
+            // Set the adapter
+            mRecyclerView = (RecyclerView) view.findViewById(R.id.list);
+            mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+            mRecyclerView.setAdapter(new MyItemRecyclerViewAdapter(filteredEvent, typeNames, personList));
 
         return view;
     }

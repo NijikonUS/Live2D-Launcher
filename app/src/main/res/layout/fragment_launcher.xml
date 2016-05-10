@@ -15,17 +15,33 @@
         android:alpha="0.5"
         android:src="@drawable/arrows"/>
 
+    <TextView
+        android:id="@+id/query_view"
+        android:layout_width="245dp"
+        android:layout_height="40dp"
+        android:hint="Try to say hello."
+        android:background="@drawable/input_border"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:gravity="center_vertical"
+        android:textSize="15sp"
+        android:padding="5dp"
+        android:layout_margin="10dp"
+        android:alpha="0.5"
+        />
+
+
     <ImageButton
         android:id="@+id/speech"
         android:background="@color/transparent"
-        android:layout_height="40dp"
-        android:layout_width="40dp"
+        android:layout_height="45dp"
+        android:layout_width="45dp"
         android:layout_alignParentBottom="true"
         android:layout_alignParentRight="true"
         android:layout_margin="10dp"
         android:scaleType="fitCenter"
-        android:alpha="0.5"
-        android:src="@drawable/microphone"/>
+        android:alpha="0.6"
+        android:src="@drawable/microphone_button"/>
 
 
     <RelativeLayout

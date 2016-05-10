@@ -57,6 +57,7 @@ public class LauncherFragment extends Fragment{
     ImageButton speech;
     RelativeLayout launcherfragment;
     TextView textView;
+    TextView queryTextView;
     // finger motion
     float x1 = 0;
     float x2 = 0;
@@ -83,7 +84,7 @@ public class LauncherFragment extends Fragment{
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_launcher, container, false);
         view.setLayoutParams(new LinearLayout.LayoutParams(launcher.getUsableWidth(),launcher.getUsableHeight()));
-
+        queryTextView = (TextView)view.findViewById(R.id.query_view);
         launcherfragment = (RelativeLayout)view.findViewById(R.id.launcherFragment);
         showApps = (ImageButton)view.findViewById(R.id.showApps);
         speech = (ImageButton)view.findViewById(R.id.speech);
@@ -101,10 +102,12 @@ public class LauncherFragment extends Fragment{
         recognitionHelper.setSpeechResultListener(new SpeechResultListener() {
             @Override
             public void handleResult(String query, String content, String response) {
+                showQuery(query);
                 mSpeeker.speak(response, TextToSpeech.QUEUE_FLUSH, null, null);
                 Log.d("speech is ", response);
                 textView.setText(response);
-                new TextResumeTask(textView).execute();
+                speech.setAlpha(0.6f);
+                new TextResumeTask(textView,speech).execute();
                 switch (response) {
                     case RecognitionHelperImp.RESPONSE_SHOW_LOCATION:
                         handleLocation();
@@ -113,10 +116,12 @@ public class LauncherFragment extends Fragment{
                         new AsyncTask<Void, Void, Weather>() {
                             @Override
                             protected Weather doInBackground(Void... params) {
+
                                 try {
                                     return new Weather(RecognitionUtil.requestGet(RecognitionUtil.getUrlToWeather(RecognitionUtil.getLocation(getActivity()), getActivity())));
                                 } catch (IOException | JSONException e) {
                                     e.printStackTrace();
+                                    Log.d("fafdsafsfsfasfsafsadfs","fafsfsdf");
                                     return null;
                                 }
                             }
@@ -134,12 +139,23 @@ public class LauncherFragment extends Fragment{
                         //TODO
                         launcher.goFragment(ItemFragment.TAG);
                         break;
-                    case RecognitionHelperImp.RESPONSE_TO_SEND_MESSAGE:
-                        //TODO
-                        break;
                     case RecognitionHelperImp.RESPONSE_TO_CALL:
                         //TODO
+                        RecognitionUtil.call(content, launcher);
                         break;
+                }
+            }
+
+            @Override
+            public void handleContact(String query, String content,
+                                      String response, String personName) {
+                mSpeeker.speak(response + personName, TextToSpeech.QUEUE_FLUSH, null, null);
+                Log.d("speech is ", response);
+                speech.setAlpha(0.6f);
+                textView.setText(response + personName);
+                new TextResumeTask(textView,speech).execute();
+                if (response == RecognitionHelperImp.RESPONSE_TO_CALL) {
+                    RecognitionUtil.call(content, launcher);
                 }
             }
         });
@@ -157,12 +173,12 @@ public class LauncherFragment extends Fragment{
         speech.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //   ((TextView)launcher.findViewById(R.id.hookText)).setText(" ###### ");
-                // launcher.getLive2DMgr().startMotion(LAppDefine.MOTION_POSITIVE);
+                 launcher.getLive2DMgr().startMotion(LAppDefine.MOTION_POSITIVE);
                 // recognitionHelper.handleClickEvent(1);
 //                LAppDefine.back_image_path = "image/images.jpeg";
 //                launcher.getLive2DMgr().updateBackground(((LAppDefine.back_image_path)));
                 recognitionHelper.handleClickEvent(1);
+                speech.setAlpha(1f);
                 //getFragmentManager().beginTransaction().add(R.id.main,new WallPaperFragment().setParent(launcher)).commit();
                // launcher.goFragment(WeatherFragment.tag);
                 //launcher.findViewById(R.id.live2dLayout).invalidate();
@@ -219,4 +235,10 @@ public class LauncherFragment extends Fragment{
         mSpeeker.shutdown();
     }
 
+    private void showQuery(String query) {
+        queryTextView.setText(query);
+        new TextResumeTask(queryTextView,null).execute();/// 还原文字
+
+
+    }
 }

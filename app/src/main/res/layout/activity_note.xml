@@ -33,20 +33,20 @@
             android:layout_margin="17dp"
             android:id="@+id/editText"
             android:editable="true"
-            android:hint="Key-in here"
+            android:hint="Input note here"
             android:gravity="start"
             android:background="@drawable/text_background"/>
 
         <Button
-            android:layout_width="wrap_content"
+            android:layout_width="150dp"
             android:layout_height="wrap_content"
             android:text="Next"
             android:textSize="28dp"
             android:textColor="#880E4F"
-            android:layout_gravity="right"
+            android:layout_gravity="end"
             android:id="@+id/button"
-            android:background="@drawable/shape"
-            android:layout_margin="5dp" />
+            android:background="@drawable/button_deep_blue"
+            android:layout_margin="17dp" />
 
     </LinearLayout>
 

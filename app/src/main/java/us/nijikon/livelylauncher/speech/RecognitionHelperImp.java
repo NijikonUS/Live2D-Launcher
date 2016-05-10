@@ -2,6 +2,7 @@ package us.nijikon.livelylauncher.speech;
 
 import android.content.Context;
 import android.content.Intent;
+import android.location.LocationManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.speech.RecognitionListener;
@@ -9,7 +10,6 @@ import android.speech.RecognizerIntent;
 import android.speech.SpeechRecognizer;
 import android.speech.tts.TextToSpeech;
 import android.speech.tts.Voice;
-import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 import android.widget.MultiAutoCompleteTextView;
 
@@ -21,8 +21,11 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.text.DateFormat;
+import java.text.ParsePosition;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
@@ -30,6 +33,11 @@ import java.util.Map;
 import java.util.Random;
 
 import okhttp3.OkHttpClient;
+import us.nijikon.livelylauncher.launcher.AppDataHolder;
+import us.nijikon.livelylauncher.launcher.Launcher;
+import us.nijikon.livelylauncher.live2dHelpers.LAppDefine;
+import us.nijikon.livelylauncher.models.Event;
+import us.nijikon.livelylauncher.models.Type;
 import us.nijikon.livelylauncher.speech.RecognitionHelper;
 import us.nijikon.livelylauncher.speech.RecognitionUtil;
 import us.nijikon.livelylauncher.speech.SpeechResultListener;
@@ -47,6 +55,7 @@ public class RecognitionHelperImp implements RecognitionHelper {
     public static final String CONTENT_MY_LOCATION = "MYLOCATION";
     public static final String CONTENT_WEATHER = "WEATHER";
     public static final String CONTENT_SHOW_EVENT = "SHOWEVENT";
+    private static final String CONTENT_PERSON_NOT_FOUND = "PERSONNOTFOUND";
 
     public static final String RESULT_FLAG_TAG = "FLAG";
     public static final String RESULT_CONTENT_TAG = "CONTENT";
@@ -66,12 +75,13 @@ public class RecognitionHelperImp implements RecognitionHelper {
     public static final String RESPONSE_TO_CANCEL = "Canceled successfully.";
     public static final String RESPONSE_TO_HELLO = "Hello, how are you doing?";
     public static final String RESPONSE_TO_NOT_FOUND = "Sorry I'm not sure what you said, please try again.";
-    public static final String RESPONSE_TO_SEND_MESSAGE = "What do you want to send?";
+    public static final String RESPONSE_TO_SEND_MESSAGE = "What do you want to send to ";
     public static final String RESPONSE_TO_CALL = "OK, calling ";
     public static final String RESPONSE_TO_SENT = "Message sent successfully.";
     public static final String RESPONSE_SHOW_EVENT = "OK, here are all your events.";
     public static final String RESPONSE_SHOW_LOCATION = "OK, here is your current location.";
     public static final String RESPONSE_SHOW_WEATHER = "OK, here is the weather of your city.";
+    public static final String RESPONSE_PERSON_NOT_FOUND = "Sorry, there is no person in your contact named ";
 
     private static final String DEFAULT_JOKE = "Let me tell you a joke! PHP is the best programming Language in the world!";
 
@@ -80,13 +90,15 @@ public class RecognitionHelperImp implements RecognitionHelper {
             "cancel",
             "joke",
             "what time",
+            "who"
     };
 
     private static final String[] NORMAL_RESPONSES = {
             RESPONSE_TO_HELLO,
             RESPONSE_TO_CANCEL,
             DEFAULT_JOKE,
-            "It is "
+            "It is ",
+            "I am a launcher"
     };
 
     private static List<String> jokes;
@@ -127,7 +139,7 @@ public class RecognitionHelperImp implements RecognitionHelper {
 
     private SpeechResultListener speechResultListener;
 
-    //    private Event event;
+    private Event event;
     private String eventNote = "";
     private String dateAndTime = "";
 
@@ -202,6 +214,7 @@ public class RecognitionHelperImp implements RecognitionHelper {
         public SpeechListener (Context context) {
             this.context = context;
             wordMap = new HashMap<>();
+            event = new Event();
         }
 
         private void handle (String result) {
@@ -222,14 +235,16 @@ public class RecognitionHelperImp implements RecognitionHelper {
                         lastFlag = flag;
                         flag = FLAG_BEGIN_COMMAND;
                         String messageContent = result;
-//                        sendMessage(wordMap.get("personPhoneNumber"), result);
+//                        Log.d("asdiugweiudhiqwe====", wordMap.get("personPhoneNumber"));
+                        RecognitionUtil.sendMessage("9173108245", result);
                         broadcast(result, CONTENT_NULL, RESPONSE_TO_SENT);
                         break;
                     case FLAG_GET_TIME:
-                        lastFlag = flag;
-                        flag = FLAG_GET_DATE;
+
                         String time = parseTime(words);
                         if (time != "ERROR") {
+                            lastFlag = flag;
+                            flag = FLAG_GET_DATE;
                             dateAndTime += time;
                             broadcast(result, dateAndTime, RESPONSE_TO_GET_TIME);
                         }
@@ -240,35 +255,55 @@ public class RecognitionHelperImp implements RecognitionHelper {
                             Log.d("TIME ERROR", result);
                         }
                         break;
+
                     case FLAG_GET_DATE:
-                        lastFlag = flag;
-                        flag = FLAG_GET_TYPE;
-//                        String date = dateToString(parseDate(result + " 2016"));
-//                        Log.d("DATEEEEEEE", date);
-//                        dateAndTime = date + " " + dateAndTime;
-//                        event.setDate(dateAndTime);
-                        broadcast(result, dateAndTime, RESPONSE_TO_GET_DATE);
+
+                        String date = dateToString(parseDate(result + " 2016"));
+                        if (date != null) {
+                            lastFlag = flag;
+                            flag = FLAG_GET_TYPE;
+                            Log.d("DATEEEEEEE", date);
+                            dateAndTime = date + " " + dateAndTime;
+                            Log.d("TTTTTT", dateAndTime);
+                           // event.setDate(dateAndTime);
+                            broadcast(result, dateAndTime, RESPONSE_TO_GET_DATE);
+                            ((Launcher) context).setDate(parseDatetest(dateAndTime));
+                            event.setDate(dateAndTime);
+                        }
+                        else {
+                            broadcast(result, CONTENT_NULL, RESPONSE_TO_NOT_FOUND);
+                        }
                         break;
+
                     case FLAG_GET_TYPE:
                         lastFlag = flag;
                         flag = FLAG_GET_NOTE;
-//                        event.setType(new Type(result));
+                        event.setType(new Type(result));
                         broadcast(result, result, RESPONSE_TO_GET_TYPE);
                         break;
                     case FLAG_GET_NOTE:
                         lastFlag = flag;
                         flag = FLAG_GET_REMINDER;
-//                        event.setNote(result);
-                        broadcast(result, result, RESPONSE_TO_GET_NOTE);
-                        break;
-                    case FLAG_GET_REMINDER:
-                        lastFlag = flag;
-                        flag = FLAG_BEGIN_COMMAND;
-//                        event.setRemindBefore(Integer.parseInt(words[0]));
-//                        ((Launcher)context).saveToDatebase(event);
+                        event.setNote(result);
+                        ((Launcher) context).saveToDatebase(event);
                         broadcast(result, result, RESPONSE_TO_GET_REMINDER);
                         break;
+//                    case FLAG_GET_REMINDER:
+//                        lastFlag = flag;
+//                        flag = FLAG_BEGIN_COMMAND;
+//                        try {
+//                            event.setRemindBefore(Integer.parseInt(words[0]));
+//                            ((Launcher) context).saveToDatebase(event);
+//                            broadcast(result, result, RESPONSE_TO_GET_REMINDER);
+//                        } catch (Exception e) {
+//                            e.printStackTrace();
+//                            lastFlag = flag;
+//                            flag = FLAG_BEGIN_COMMAND;
+//                            broadcast(result, CONTENT_NULL, RESPONSE_TO_NOT_FOUND);
+//                        }
+//                        break;
                     default:
+                        Log.d("flagadasgaewe-----", ""+flag);
                         lastFlag = flag;
                         flag = FLAG_BEGIN_COMMAND;
                         broadcast(result, CONTENT_ERROR, RESPONSE_TO_GET_ERROR);
@@ -284,10 +319,10 @@ public class RecognitionHelperImp implements RecognitionHelper {
                     switch (word) {
                         case "hello":
                             broadcast(result, CONTENT_NULL, responseMap.get(word));
-//                            ((Launcher)context).getLive2DMgr().startMotion(LAppDefine.MOTION_NOD);
+                            ((Launcher)context).getLive2DMgr().startMotion(LAppDefine.MOTION_NOD);
                             break;
                         case "joke":
-//                            ((Launcher)context).getLive2DMgr().startMotion(LAppDefine.MOTION_ANGRY);
+                            ((Launcher)context).getLive2DMgr().startMotion(LAppDefine.MOTION_ANGRY);
                             new AsyncTask<String, Void, String>() {
                                 @Override
                                 protected String doInBackground(String... params) {
@@ -309,7 +344,8 @@ public class RecognitionHelperImp implements RecognitionHelper {
                                         for (String j : jokes) {
                                             Log.d("joke", j);
                                         }
-                                        broadcast(result, CONTENT_NULL, jokes.get(Math.abs(new Random().nextInt()) % jokes.size()));
+                                        broadcast(result, CONTENT_NULL, jokes.get
+                                                (Math.abs(new Random().nextInt()) % jokes.size()));
                                     } catch (JSONException e) {
                                         e.printStackTrace();
                                     }
@@ -328,52 +364,57 @@ public class RecognitionHelperImp implements RecognitionHelper {
         }
 
         private void beginCommand(String result, String[] words) {
-            String phoneNumber = "111111111";
-//            if (result.contains("send a message to") &&
-//                    (phoneNumber = personExists(words[4])) != null) {
+            String phoneNumber;
+            if (result.contains("send a message to") || result.contains("send a text to")) {
+                String personName = words[4];
+//                String personName = RecognitionUtil.getName(words, 4, words.length);
+                if ((phoneNumber = RecognitionUtil.personExists(((Launcher)context).getSimpleContactInfo(), personName, context)) != null) {
+                    wordMap.put("personName", personName);
+                    wordMap.put("personPhoneNumber", phoneNumber);
+                    lastFlag = flag;
+                    flag = FLAG_SEND_MESSAGE;
+                    broadcastContact(result, phoneNumber, RESPONSE_TO_SEND_MESSAGE, personName + "?");
+                }
+                else {
+                    broadcastContact(result, CONTENT_PERSON_NOT_FOUND, RESPONSE_PERSON_NOT_FOUND, personName);
+                }
+            }
+            else if (result.contains("call")) {
+                String personName = words[1];
+//                String personName = RecognitionUtil.getName(words, 1, words.length);
+                if ((phoneNumber = RecognitionUtil.personExists(
+                        ((Launcher)context).getSimpleContactInfo(), personName, context)) != null) {
+                    wordMap.put("personName", personName);
+                    wordMap.put("personPhoneNumber", phoneNumber);
+                    lastFlag = flag;
+                    flag = FLAG_BEGIN_COMMAND;
+                    broadcastContact(result, phoneNumber, RESPONSE_TO_CALL, personName);
+                }
+                else {
+                    broadcastContact(result, CONTENT_PERSON_NOT_FOUND, RESPONSE_PERSON_NOT_FOUND, personName);
+                }
+            }
+//            if (result.contains("send a message to")) {
 //                wordMap.put("personName", words[4]);
 //                wordMap.put("personPhoneNumber", phoneNumber);
 //                lastFlag = flag;
 //                flag = FLAG_SEND_MESSAGE;
 //                broadcast(result, CONTENT_NULL, RESPONSE_TO_SEND_MESSAGE);
 //            }
-//            if (result.contains("send a text to") &&
-//                    (phoneNumber = personExists(words[4])) != null) {
+//            else if (result.contains("send a text to")) {
 //                wordMap.put("personName", words[4]);
 //                wordMap.put("personPhoneNumber", phoneNumber);
 //                lastFlag = flag;
 //                flag = FLAG_SEND_MESSAGE;
 //                broadcast(result, CONTENT_NULL, RESPONSE_TO_SEND_MESSAGE);
 //            }
-//            if (result.contains("call") &&
-//                    (phoneNumber = personExists(words[1])) != null) {
+//            else if (result.contains("call")) {
 //                wordMap.put("personName", words[1]);
 //                wordMap.put("personPhoneNumber", phoneNumber);
 //                lastFlag = flag;
 //                flag = FLAG_BEGIN_COMMAND;
-//                broadcast(result, personExists(words[1]), RESPONSE_TO_CALL + words[1]);
+//                broadcast(result, phoneNumber, RESPONSE_TO_CALL + words[1]);
 //            }
-            if (result.contains("send a message to")) {
-                wordMap.put("personName", words[4]);
-                wordMap.put("personPhoneNumber", phoneNumber);
-                lastFlag = flag;
-                flag = FLAG_SEND_MESSAGE;
-                broadcast(result, CONTENT_NULL, RESPONSE_TO_SEND_MESSAGE);
-            }
-            else if (result.contains("send a text to")) {
-                wordMap.put("personName", words[4]);
-                wordMap.put("personPhoneNumber", phoneNumber);
-                lastFlag = flag;
-                flag = FLAG_SEND_MESSAGE;
-                broadcast(result, CONTENT_NULL, RESPONSE_TO_SEND_MESSAGE);
-            }
-            else if (result.contains("call")) {
-                wordMap.put("personName", words[1]);
-                wordMap.put("personPhoneNumber", phoneNumber);
-                lastFlag = flag;
-                flag = FLAG_BEGIN_COMMAND;
-                broadcast(result, phoneNumber, RESPONSE_TO_CALL + words[1]);
-            }
             else {
                 for (String word : words) {
                     switch (word) {
@@ -465,7 +506,7 @@ public class RecognitionHelperImp implements RecognitionHelper {
                                 flag = FLAG_OPEN_APP;
                                 //TODO
                                 //open
-//                        AppDataHolder.openByName(wordMap.get("noun"),context);
+                        AppDataHolder.openByName(wordMap.get("noun"), context);
 
                                 break;
                             case "delete":
@@ -473,7 +514,7 @@ public class RecognitionHelperImp implements RecognitionHelper {
                                 flag = FLAG_DELETE_APP;
                                 //TODO
                                 //unistall
-//                        AppDataHolder.unistallByName(wordMap.get("noun"), context);
+                        AppDataHolder.unistallByName(wordMap.get("noun"), context);
                                 break;
                             case "am":
                                 if (wordMap.get("whQuestion").equals("where") &&
@@ -560,6 +601,18 @@ public class RecognitionHelperImp implements RecognitionHelper {
             speechResultListener.handleResult(query, content, response);
         }
 
+        private void broadcastContact (String query, String content, String response, String personName) {
+//            mSpeeker.speak(response, TextToSpeech.QUEUE_FLUSH, null, null);
+            Log.d(TAG, "response = " + response);
+            Log.d(TAG, "content = " + content);
+            Log.d(TAG, "person name = " + personName);
+
+//            LocalBroadcastManager.getInstance(context).sendBroadcast(new Intent(ACTION_SPEECH).
+//                    putExtra(RESULT_CONTENT_TAG, content).putExtra(RESULT_RESPONSE_TAG, response));
+////            LocalBroadcastManager.getInstance(context).sendBroadcast(new Intent(ACTION_SPEECH).putExtra(RESULT_FLAG_TAG, flag));
+            speechResultListener.handleContact(query, content, response, personName);
+        }
+
         public void onBufferReceived(byte[] buffer) {
             Log.d(TAG, "buffer recieved ");
         }
@@ -567,9 +620,12 @@ public class RecognitionHelperImp implements RecognitionHelper {
         public void onError(int error) {
             //if critical error then exit
             Log.d(TAG, "error = " + String.valueOf(error));
-            if (error == SpeechRecognizer.ERROR_SPEECH_TIMEOUT) {
-//                broadcast(CONTENT_ERROR, RESPONSE_TO_GET_ERROR);
-            }
+//            switch (error) {
+//                case SpeechRecognizer.ERROR_SPEECH_TIMEOUT:
+//                case SpeechRecognizer.ERROR_NO_MATCH:
+//                    broadcast("", CONTENT_ERROR, RESPONSE_TO_NOT_FOUND);
+//                    break;
+//            }
         }
 
         public void onEvent(int eventType, Bundle params) {
@@ -594,6 +650,7 @@ public class RecognitionHelperImp implements RecognitionHelper {
                     Log.d("acacacacacacacac", matches.toString());
 //                    LocalBroadcastManager.getInstance(context).sendBroadcast(new Intent("AAA").putExtra(TAG, result));
                     handle(result);
+
                 }
             }
         }
@@ -611,23 +668,39 @@ public class RecognitionHelperImp implements RecognitionHelper {
         }
 
     }
-//
-//    public static Date parseDate(String date){
-//        Date d = null;
-//        String[] formats = {"MMMM d'st' yyyy","MMMM d'nd' yyyy","MMMM d'rd' yyyy","MMMM d'th' yyyy"};
-//        ParsePosition position = new ParsePosition(0);
-//        for (String format : formats) {
-//            position.setIndex(0);
-//            position.setErrorIndex(-1);
-//            // no ParseException but a null return instead
-//            d = new SimpleDateFormat(format).parse(date, position);
-//            if (d != null) {
-//                return d;
-//            }
-//        }
-//        return d;
-//    }
 
+    public static Date parseDate(String date){
+        Date d = null;
+        String[] formats = {"MMMM d'st' yyyy","MMMM d'nd' yyyy","MMMM d'rd' yyyy","MMMM d'th' yyyy", "MMMM d yyyy"};
+        ParsePosition position = new ParsePosition(0);
+        for (String format : formats) {
+            position.setIndex(0);
+            position.setErrorIndex(-1);
+            // no ParseException but a null return instead
+            d = new SimpleDateFormat(format).parse(date, position);
+            if (d != null) {
+                return d;
+            }
+        }
+        return d;
+    }
+
+    public static Date parseDatetest(String date){
+        Log.d("f&sfsadf",date);
+        Date d = null;
+        String[] formats = {"dd/MM/yy hh:mm:ss","MMMM d'nd' yyyy hh:mm:ss","MMMM d'rd' yyyy hh:mm:ss","MMMM d'th' yyyy hh:mm:ss", "MMMM d yyyy hh:mm:ss"};
+        ParsePosition position = new ParsePosition(0);
+        for (String format : formats) {
+            position.setIndex(0);
+            position.setErrorIndex(-1);
+            // no ParseException but a null return instead
+            d = new SimpleDateFormat(format).parse(date, position);
+            if (d != null) {
+                return d;
+            }
+        }
+        return d;
+    }
     private static String parseTime(String[] words) {
         Log.d("mmmmmmmmmmmmmmmm", words[0]);
         if (words.length >= 2) {
@@ -650,10 +723,14 @@ public class RecognitionHelperImp implements RecognitionHelper {
         }
         return "ERROR";
     }
-//
-//    public static String dateToString(Date date){
-//
-//        SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yy");
-//        return sdf.format(date);
-//    }
+
+    public static String dateToString(Date date){
+        if (date != null) {
+            SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yy");
+            return sdf.format(date);
+        }
+        else {
+            return null;
+        }
+    }
 }

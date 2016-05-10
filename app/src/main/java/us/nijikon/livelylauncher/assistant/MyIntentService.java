@@ -84,6 +84,7 @@ public class MyIntentService extends IntentService {
         Log.e(TAG, "text:" + text);
         in.putExtra("rowId", rowId);
         Log.e(TAG, "rowId:" + rowId);
+        in.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 
         PendingIntent pi = PendingIntent.getActivity(this, (int) rowId, in, 0);
 

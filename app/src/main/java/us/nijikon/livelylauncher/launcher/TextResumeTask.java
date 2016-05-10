@@ -1,6 +1,7 @@
 package us.nijikon.livelylauncher.launcher;
 
 import android.os.AsyncTask;
+import android.widget.ImageButton;
 import android.widget.TextView;
 
 import us.nijikon.livelylauncher.R;
@@ -10,8 +11,10 @@ import us.nijikon.livelylauncher.R;
  */
 public class TextResumeTask extends AsyncTask<Void, Void, Void>{
     private TextView textView;
-    TextResumeTask(TextView textView){
+    private ImageButton button;
+    TextResumeTask(TextView textView,ImageButton button){
         this.textView = textView;
+        this.button = button;
     }
 
     @Override
@@ -27,6 +30,11 @@ public class TextResumeTask extends AsyncTask<Void, Void, Void>{
 
     @Override
     protected void onPostExecute(Void v){
-        textView.setText("How can I help you?");
+        if(textView != null) {
+            textView.setText("How can I help you?");
+        }
+        if(button != null){
+            button.setAlpha(0.6f);
+        }
     }
 }

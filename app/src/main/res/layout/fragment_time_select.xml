@@ -32,7 +32,7 @@
         android:layout_marginTop="28dp"
         android:text="Set date"
         android:textSize="20sp"
-        android:background="@drawable/shape"
+        android:background="@drawable/button_blue"
         android:id="@+id/btn1" />
 
     <TextView
@@ -50,7 +50,7 @@
 
         android:text="Set Time"
         android:textSize="20sp"
-        android:background="@drawable/shape"
+        android:background="@drawable/button_blue"
         android:id="@+id/btn2" />
 
 
@@ -69,7 +69,7 @@
         android:text="Confirm"
         android:textSize="20sp"
         android:textColor="#6666CC"
-        android:background="@drawable/text_background"
+        android:background="@drawable/button_deep_blue"
         android:id="@+id/btn3"
         android:layout_gravity="right" />
 

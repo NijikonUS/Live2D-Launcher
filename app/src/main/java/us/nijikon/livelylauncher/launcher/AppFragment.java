@@ -59,6 +59,7 @@ public class AppFragment extends Fragment implements LoaderManager.LoaderCallbac
     private Launcher launcher;
     private String target;
     private ItemTouchHelper touchHelper;
+    private ImageButton wallpaperButton;
     RecyclerViewFastScroller fastScroller;
 
 
@@ -124,6 +125,14 @@ public class AppFragment extends Fragment implements LoaderManager.LoaderCallbac
 
         View view = inflater.inflate(R.layout.fragment_appfragment, container, false);
         view.setLayoutParams(new LinearLayout.LayoutParams(launcher.getUsableWidth(),launcher.getUsableHeight()));
+
+        wallpaperButton = (ImageButton) view.findViewById(R.id.wallpaperButton);
+        wallpaperButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                launcher.goFragment(WallPaperFragment.tag);
+            }
+        });
 
         appRecyclerView = (RecyclerView)view.findViewById(R.id.applist);
         top4RecyclerView = (RecyclerView)view.findViewById(R.id.top4list);

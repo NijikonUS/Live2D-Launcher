@@ -6,7 +6,7 @@
 
       <corners android:radius="2dp"/>
 
-      <solid android:color="@color/secondaryBack"/>
+      <solid android:color="#66cccc"/>
 
       <size
         android:height="32dp"
@@ -19,7 +19,7 @@
 
       <corners android:radius="2dp"/>
 
-      <solid android:color="@color/primaryBack"/>
+      <solid android:color="#5066cccc"/>
 
       <size
         android:height="32dp"
