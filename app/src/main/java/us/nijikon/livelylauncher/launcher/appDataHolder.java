@@ -47,7 +47,7 @@ public class AppDataHolder {
     }
 
     /*
-     * Using this function to get instance. Singleton pattern
+     * Using this function to get instance. Singleton pattern sychronized
      */
     public static final AppDataHolder getInstance(){
         return Singleton.Instance;
