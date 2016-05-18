@@ -1,0 +1,76 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="50dp"
+    android:orientation="vertical"
+    android:background="@color/secondaryBack"
+    android:clickable="true">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Select Time"
+        android:textSize="28sp"
+        android:textColor="@color/primaryText"
+        android:id="@+id/txv"
+        android:layout_gravity="center_horizontal" />
+
+    <ImageView
+        android:layout_width="180dp"
+        android:layout_height="180dp"
+        android:scaleType="center"
+        android:layout_marginTop="10dp"
+        android:background="@drawable/clock"
+        android:id="@+id/imageView"
+        android:layout_gravity="center" />
+
+
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="28dp"
+        android:text="Set date"
+        android:textSize="20sp"
+        android:background="@drawable/button_blue"
+        android:id="@+id/btn1" />
+
+    <TextView
+        android:layout_width="150dp"
+        android:layout_height="wrap_content"
+        android:padding="10sp"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:textColor="@color/primaryText"
+        android:id="@+id/textView1"
+        android:layout_gravity="left" />
+
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+
+        android:text="Set Time"
+        android:textSize="20sp"
+        android:background="@drawable/button_blue"
+        android:id="@+id/btn2" />
+
+
+    <TextView
+        android:layout_width="150dp"
+        android:layout_height="wrap_content"
+        android:padding="10sp"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:textColor="@color/primaryText"
+        android:id="@+id/textView2"
+        android:layout_gravity="left"/>
+
+    <Button
+        android:layout_width="150dp"
+        android:layout_height="wrap_content"
+        android:text="Confirm"
+        android:textSize="20sp"
+        android:textColor="#6666CC"
+        android:background="@drawable/button_deep_blue"
+        android:id="@+id/btn3"
+        android:layout_gravity="right" />
+
+</LinearLayout>

@@ -3,40 +3,53 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:paddingBottom="@dimen/activity_vertical_margin"
-    android:paddingLeft="@dimen/activity_horizontal_margin"
-    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingBottom="20dp"
+    android:paddingLeft="20dp"
+    android:paddingRight="20dp"
     android:paddingTop="30dp"
-    android:background="@drawable/bkg3"
+    android:background="@color/secondaryBack"
     android:orientation="vertical"
     android:id="@+id/linear"
-    tools:context=".assistant.RemindActivity">
+    tools:context=".assistant.RemindActivity"
+    android:gravity="center_horizontal">
 
     <LinearLayout
         android:orientation="horizontal"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:layout_gravity="left"
+        android:gravity="left">
 
-
-        <Switch
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:text="Set Alerm Notification"
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:text="Set Remind"
+            android:textColor="#E65100"
             android:textSize="25sp"
-            android:textColor="#6A1B9A"
-            android:id="@+id/switch1" />
+            android:layout_marginRight="25dp"/>
 
         <Button
-            android:layout_width="120dp"
-            android:layout_height="80dp"
-            android:text="Alerm"
+            android:layout_width="55dp"
+            android:layout_height="55dp"
+            android:text="On"
+            android:id="@+id/on"
             android:layout_gravity="center_horizontal"
-            android:layout_margin="25dp"
-            android:id="@+id/button2"
-            android:background="#F48FB1"
-            android:textColor="#000000"
-            android:textSize="20sp"/>
-
+            android:layout_margin="7dp"
+            android:background="@drawable/shape"
+            android:textColor="#00BCD4"
+            android:textSize="18sp"/>
+        <Button
+            android:layout_width="55dp"
+            android:layout_height="55dp"
+            android:text="Off"
+            android:id="@+id/off"
+            android:layout_gravity="center_horizontal"
+            android:layout_margin="7dp"
+            android:background="@drawable/shape"
+            android:textColor="#00BCD4"
+            android:textSize="18sp"/>
 
 
     </LinearLayout>
@@ -52,85 +65,86 @@
             android:textAppearance="?android:attr/textAppearanceLarge"
             android:text="Remind before"
             android:textColor="#880E4F"
-            android:textSize="40sp"
-            android:id="@+id/textView" />
+            android:textSize="32sp"
+            android:id="@+id/textView"
+            android:layout_marginTop="20dp"
+            android:layout_marginBottom="15dp" />
     </LinearLayout>
 
     <LinearLayout
         android:orientation="horizontal"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="left">
 
         <Button
-            android:layout_width="50dp"
-            android:layout_height="50dp"
+            android:layout_width="60dp"
+            android:layout_height="60dp"
             android:text="0"
             android:id="@+id/bt_0"
             android:layout_gravity="center_horizontal"
-            android:layout_margin="10dp"
-            android:background="#F06292"
-            android:textColor="#FFFFFF"
+            android:layout_margin="8dp"
+            android:background="@drawable/shape"
+            android:textColor="#00BCD4"
             android:textSize="20sp"/>
         <Button
-            android:layout_width="50dp"
-            android:layout_height="50dp"
+            android:layout_width="60dp"
+            android:layout_height="60dp"
             android:text="10"
             android:id="@+id/bt_10"
             android:layout_gravity="center_horizontal"
-            android:layout_margin="10dp"
-            android:background="#F06292"
-            android:textColor="#FFFFFF"
+            android:layout_margin="8dp"
+            android:background="@drawable/shape"
+            android:textColor="#00BCD4"
             android:textSize="20sp"/>
         <Button
-            android:layout_width="50dp"
-            android:layout_height="50dp"
+            android:layout_width="60dp"
+            android:layout_height="60dp"
             android:text="30"
             android:id="@+id/bt_30"
             android:layout_gravity="center_horizontal"
-            android:layout_margin="10dp"
-            android:background="#F06292"
-            android:textColor="#FFFFFF"
+            android:layout_margin="8dp"
+            android:background="@drawable/shape"
+            android:textColor="#00BCD4"
             android:textSize="20sp"/>
         <Button
-            android:layout_width="50dp"
-            android:layout_height="50dp"
+            android:layout_width="60dp"
+            android:layout_height="60dp"
             android:text="60"
             android:id="@+id/bt_60"
             android:layout_gravity="center_horizontal"
-            android:layout_margin="10dp"
-            android:background="#F06292"
-            android:textColor="#FFFFFF"
+            android:layout_margin="8dp"
+            android:background="@drawable/shape"
+            android:textColor="#00BCD4"
             android:textSize="20sp"/>
 
 
     </LinearLayout>
 
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="@color/primaryText"
+        android:id="@+id/show" />
+
     <LinearLayout
         android:orientation="vertical"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp">
 
 
         <Button
             android:layout_width="120dp"
-            android:layout_height="80dp"
+            android:layout_height="70dp"
             android:text="Confrim"
             android:layout_gravity="right"
             android:layout_margin="15dp"
             android:id="@+id/confirm"
-            android:background="#9575CD"
-            android:textColor="#FFFFFF"
+            android:background="@drawable/shape"
+            android:textColor="#FF4081"
             android:textSize="20sp"/>
-        <Button
-            android:layout_width="120dp"
-            android:layout_height="80dp"
-            android:text="Add New"
-            android:layout_gravity="right"
-            android:layout_margin="15dp"
-            android:id="@+id/add"
-            android:background="#9575CD"
-            android:textColor="#FFFFFF"
-            android:textSize="20sp"/>
+
 
 
 

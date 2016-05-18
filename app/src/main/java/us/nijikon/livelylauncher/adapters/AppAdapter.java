@@ -28,16 +28,17 @@ import us.nijikon.livelylauncher.R;
 import us.nijikon.livelylauncher.launcher.AppDataHolder;
 import us.nijikon.livelylauncher.launcher.AppLoader;
 import us.nijikon.livelylauncher.launcher.ListItemListener;
+import us.nijikon.livelylauncher.layoutExtending.RecyclerViewFastScroller;
 import us.nijikon.livelylauncher.models.AppModel;
 
 /**
  * Created by bowang .
  */
-public class AppAdapter extends RecyclerView.Adapter<AppAdapter.AppViewHolder> implements ItemTouchHelperAdapter{
+public class AppAdapter extends RecyclerView.Adapter<AppAdapter.AppViewHolder> implements ItemTouchHelperAdapter, RecyclerViewFastScroller.BubbleTextGetter {
 
     public static final String tag = "AppAdapter";
 
-    public static class AppViewHolder extends RecyclerView.ViewHolder{
+    public static class AppViewHolder extends RecyclerView.ViewHolder {
         private CardView cardView;
         private ImageView appIcon;
         private TextView appName;
@@ -113,6 +114,11 @@ public class AppAdapter extends RecyclerView.Adapter<AppAdapter.AppViewHolder> i
             }
         });
 
+    }
+
+    @Override
+    public String getTextToShowInBubble(final int pos) {
+        return Character.toString(data.get(pos).getAppName().charAt(0));
     }
 
     @Override

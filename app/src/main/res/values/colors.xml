@@ -6,5 +6,16 @@
     <color name = "secondaryText">#54FFFFFF</color>
     <color name = "transparent">#00000000</color>
     <color name = "secondaryBack">#5037474F</color>
+    <color name="item_selected">#333333</color>
+
+
+
+    <color name="item_border">#666666</color>
+
+    <color name="light_blue">#99CCFF </color>
+    <color name="deep_blue">#6699CC </color>
+    <color name="blue">#66CCFF </color>
+
+    <color name="white">#FFFFFF </color>
 
 </resources>

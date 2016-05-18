@@ -4,6 +4,7 @@
 package us.nijikon.livelylauncher.live2dHelpers;
 
 import android.opengl.GLSurfaceView;
+import android.util.Log;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -26,6 +27,7 @@ public class LAppRenderer implements GLSurfaceView.Renderer {
 	private float accelX=0;
 	private float accelY=0;
 
+	private boolean ifChangeBG = false;
 
 	public LAppRenderer( LAppLive2DManager live2DMgr  ){
 		this.delegate = live2DMgr ;
@@ -35,7 +37,6 @@ public class LAppRenderer implements GLSurfaceView.Renderer {
 	
 	@Override
 	public void onSurfaceCreated(GL10 context, EGLConfig arg1) {
-
 		setupBackground(context);
 	}
 
@@ -43,10 +44,16 @@ public class LAppRenderer implements GLSurfaceView.Renderer {
 	
 	@Override
 	public void onSurfaceChanged(GL10 gl, int width, int height) {
-		delegate.onSurfaceChanged(gl,width,height);//Live2D Event
 
+
+
+		delegate.onSurfaceChanged(gl, width, height);//Live2D Event
+//
+
+
+		Log.d("######", "@@@@@@@@@@@@@@@@");
 		
-		gl.glViewport(0, 0, width ,height);
+		gl.glViewport(0, 0, width, height);
 
 
 		gl.glMatrixMode(GL10.GL_PROJECTION);
@@ -77,11 +84,9 @@ public class LAppRenderer implements GLSurfaceView.Renderer {
 
 		gl.glClear(GL10.GL_COLOR_BUFFER_BIT);
 
-		
 		delegate.update(gl);
 
-		
-		
+
 		gl.glMatrixMode(GL10.GL_MODELVIEW) ;
 		gl.glLoadIdentity() ;
 
@@ -112,7 +117,9 @@ public class LAppRenderer implements GLSurfaceView.Renderer {
 			if(bg!=null){
 				gl.glPushMatrix() ;
 				{
-					float SCALE_X = 0.25f ;
+//					float SCALE_X = 0.25f ;
+//					float SCALE_Y = 0.1f ;
+					float SCALE_X = 0.4f ;
 					float SCALE_Y = 0.1f ;
 					gl.glTranslatef( -SCALE_X  * accelX , SCALE_Y * accelY , 0 ) ;
 
@@ -127,15 +134,6 @@ public class LAppRenderer implements GLSurfaceView.Renderer {
 				model.update();
 				model.draw(gl);
 			}
-//			for(int i=0;i<delegate.getModelNum();i++)
-//			{
-//				LAppModel model = delegate.getModel(i);
-//				if(model.isInitialized() && ! model.isUpdating())
-//				{
-//					model.update();
-//					model.draw(gl);
-//				}
-//			}
 		}
 		gl.glPopMatrix() ;
 
@@ -154,22 +152,18 @@ public class LAppRenderer implements GLSurfaceView.Renderer {
 	}
 
 
-	
+	public SimpleImage getBackground(){
+		return bg;
+	}
 	private void setupBackground(GL10 context) {
-		try {
-			InputStream in = FileManager.open("image/walltest.png");
-			bg=new SimpleImage(context,in);
 
-			bg.setDrawRect(
-					LAppDefine.VIEW_LOGICAL_MAX_LEFT,
-					LAppDefine.VIEW_LOGICAL_MAX_RIGHT,
-					LAppDefine.VIEW_LOGICAL_MAX_BOTTOM,
-					LAppDefine.VIEW_LOGICAL_MAX_TOP);
-
-
-			bg.setUVRect(0.0f,2.0f,0.0f,2.0f);
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+		bg=new SimpleImage(context,LAppDefine.back_image_path);
+		bg.setDrawRect(
+				LAppDefine.VIEW_LOGICAL_MAX_LEFT,
+				LAppDefine.VIEW_LOGICAL_MAX_RIGHT,
+				LAppDefine.VIEW_LOGICAL_MAX_BOTTOM,
+				LAppDefine.VIEW_LOGICAL_MAX_TOP);
+		bg.setUVRect(0.0f,2.0f,0.0f,2.0f);
+		ifChangeBG = true;
 	}
 }

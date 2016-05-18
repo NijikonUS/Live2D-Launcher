@@ -47,7 +47,7 @@ public class AppDataHolder {
     }
 
     /*
-     * Using this function to get instance. Singleton pattern
+     * Using this function to get instance. Singleton pattern sychronized
      */
     public static final AppDataHolder getInstance(){
         return Singleton.Instance;
@@ -66,8 +66,7 @@ public class AppDataHolder {
      *
      */
     public boolean loadFromFile(Context context){
-        //already have data, no need to load again
-        if(data != null) return true;
+
         SharedPreferences sharedPreferences = context.getSharedPreferences(context.getString(R.string.allApps), Context.MODE_PRIVATE);
         if(!sharedPreferences.getBoolean(IF_WRITTEN,false)) {
             Log.d(tag, "sharedPreference is null");
@@ -112,7 +111,7 @@ public class AppDataHolder {
             editor.putInt(app.getPackageName() /*+ "::" + app.getAppName()*/, app.getClickTimes());
         }
         editor.apply();
-        Log.d("WRITE FILE"," done");
+        Log.d("WRITE FILE", " done");
     }
 
     /**
@@ -122,6 +121,11 @@ public class AppDataHolder {
      *
      */
     public boolean firstLoad(Context context){
+        SharedPreferences sharedPreferences = context.getSharedPreferences(context.getString(R.string.allApps), Context.MODE_PRIVATE);
+        if(sharedPreferences != null && sharedPreferences.getBoolean(IF_WRITTEN,false)) {
+            Log.d(tag, "not first load");
+            return false;
+        }
         PackageManager packageManager = context.getPackageManager();
         Intent mainIntent = new Intent();
         mainIntent.addCategory(Intent.CATEGORY_LAUNCHER);
@@ -137,6 +141,42 @@ public class AppDataHolder {
         return true;
     }
 
+    public boolean update(Context context){
+        PackageManager packageManager = context.getPackageManager();
+        Intent mainIntent = new Intent();
+        mainIntent.addCategory(Intent.CATEGORY_LAUNCHER);
+        mainIntent.setAction(Intent.ACTION_MAIN);
+        List<ResolveInfo> appInfoList = packageManager.queryIntentActivities(mainIntent, PackageManager.MATCH_ALL);
+        HashMap<String,AppModel> apps = new HashMap<>();
+        for(int i =0;i<appInfoList.size();i++){
+            apps.put(appInfoList.get(i).activityInfo.packageName, new AppModel((String) appInfoList.get(i).loadLabel(packageManager), appInfoList.get(i).loadIcon(packageManager), appInfoList.get(i).activityInfo.packageName));
+        }
+        if(data == null){
+            if(!firstLoad(context)) {
+                loadFromFile(context);
+                data = updateHelper(data,apps);
+            }
+
+        }else {
+            data = updateHelper(data,apps);
+        }
+        setData(data);
+        return true;
+    }
+
+    private ArrayList<AppModel> updateHelper(List<AppModel> old, HashMap<String,AppModel> newData){
+        if(old != null) {
+            for (int i = 0; i < old.size(); i++) {
+                String pack = old.get(i).getPackageName();
+                AppModel app = newData.get(pack);
+                if (app != null) {
+                    app.setClickTime(old.get(i).getClickTimes());
+                }
+            }
+        }
+        return new ArrayList<>(newData.values());
+    }
+
     public List<AppModel> getData(){
         return this.data;
     }
@@ -150,6 +190,16 @@ public class AppDataHolder {
         if(data == null) return null;
         AppModel[] top4 = new AppModel[4];
         //init top4
+        if(data.size() < 4){
+            for(int i =0 ;i< 4;i++){
+                if(data.size() > i) {
+                    top4[i] = data.get(i);
+                } else {
+                    top4[i] = null;
+                }
+            }
+
+        }
         for(int i =0 ;i< 4;i++){
             top4[i] = data.get(i);
         }
@@ -162,6 +212,9 @@ public class AppDataHolder {
                 }
             }
             if(place < 4){
+                for(int k = 3; k > place ;k--){
+                    top4[k] = top4[k-1];
+                }
                 top4[place] = data.get(i);
             }
         }
@@ -173,4 +226,38 @@ public class AppDataHolder {
         context.startActivity(uninstall);
         return true;
     }
+
+    public static boolean unistallByName(String appName,Context context){
+        AppModel one = null;
+        List<AppModel> list = getInstance().data;
+        for(int i = 0; i< list.size();i++){
+            if(list.get(i).getAppName().toLowerCase().equals(appName)){
+                one = list.get(i);
+                break;
+            }
+        }
+        if(one != null){
+            Intent uninstall = new Intent(Intent.ACTION_DELETE, Uri.parse("package:" + one.getPackageName()));
+            context.startActivity(uninstall);
+            return true;
+        }
+        return false;
+    }
+
+    public static boolean openByName(String appName, Context context){
+        AppModel one = null;
+        List<AppModel> list = getInstance().data;
+        for(int i = 0; i< list.size();i++){
+            if(list.get(i).getAppName().toLowerCase().equals(appName)){
+                one = list.get(i);
+                break;
+            }
+        }
+        if(one != null){
+            context.startActivity(context.getPackageManager().getLaunchIntentForPackage(one.getPackageName()));
+            return true;
+        }
+        return false;
+    }
+
 }

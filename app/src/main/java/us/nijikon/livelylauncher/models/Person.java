@@ -1,5 +1,6 @@
 package us.nijikon.livelylauncher.models;
 
+import android.net.Uri;
 import android.os.Parcel;
 import android.os.Parcelable;
 
@@ -13,11 +14,13 @@ public class Person implements Parcelable {
     private String name;
     private String email;
     private String phoneNumber;
-    private long id;
+    private long personId;
+    private Uri mPhotoUri;
+
     /**
      * Parcelable creator. Do not modify this function.
      */
-    public static final Parcelable.Creator<Person> CREATOR = new Parcelable.Creator<Person>() {
+    public static final Creator<Person> CREATOR = new Creator<Person>() {
         public Person createFromParcel(Parcel p) {
             return new Person(p);
         }
@@ -39,7 +42,7 @@ public class Person implements Parcelable {
         name = p.readString();
         email = p.readString();
         phoneNumber = p.readString();
-        id = p.readLong();
+        personId = p.readLong();
     }
 
     /**
@@ -48,19 +51,31 @@ public class Person implements Parcelable {
      * @param name Add arbitrary number of arguments to
      * instantiate Person class based on member variables.
      */
-    public Person(String name,String location, String phoneNumber, Long age) {
+    public Person(String name,String location, String phoneNumber, Long personId) {
 
         this.name = name;
         this.email = location;
         this.phoneNumber = phoneNumber;
-        this.id = age;
+        this.personId = personId;
+    }
+
+    public Person(String name, long id, String phoneNumber){
+        this.name = name;
+        this.personId = id;
+        this.phoneNumber = phoneNumber;
+    }
+    public Person(String name, long id, String phoneNumber,Uri uri){
+        this.name = name;
+        this.personId = id;
+        this.phoneNumber = phoneNumber;
+        this.mPhotoUri = uri;
     }
 
     public String getName(){
 
         return name;
     }
-    public String getLocation(){
+    public String getEmail(){
 
         return email;
     }
@@ -68,24 +83,15 @@ public class Person implements Parcelable {
 
         return phoneNumber;
     }
-    public long getAge(){
+    public long getpersonId(){
 
-        return id;
+        return personId;
     }
 
-    /**
-     * Serialize Person object by using writeToParcel.
-     * This function is automatically called by the
-     * system when the object is serialized.
-     *
-     * @param dest Parcel object that gets written on
-     * serialization. Use functions to write out the
-     * object stored via your member variables.
-     *
-     * @param flags Additional flags about how the object
-     * should be written. May be 0 or PARCELABLE_WRITE_RETURN_VALUE.
-     * In our case, you should be just passing 0.
-     */
+    public Uri getPhotoUri() {
+        return mPhotoUri;
+    }
+
     @Override
     public void writeToParcel(Parcel dest, int flags) {
 
@@ -93,7 +99,7 @@ public class Person implements Parcelable {
         dest.writeString(name);
         dest.writeString(email);
         dest.writeString(phoneNumber);
-        dest.writeLong(id);
+        dest.writeLong(personId);
     }
 
     /**
