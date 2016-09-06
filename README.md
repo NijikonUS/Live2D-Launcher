@@ -1,6 +1,6 @@
 # Live2D-Launcher
 
-<B>structure overview</B>
+<B>Structure OverView</B>
 
 More detail should be found in [document](https://github.com/NijikonUS/Live2D-Launcher/blob/master/doc/LivelyLauncher.pdf)
 
@@ -20,8 +20,10 @@ It also has the basic functionalities as a home screen launcher.
 
 <img src="https://github.com/NijikonUS/Live2D-Launcher/raw/master/doc/Picture4.png" width="20%" height="20%">  
 
-By scrolling right, user can start scheduling, categorizing their events, setting the reminders, inviting friends.
+By scrolling right, user can start scheduling, categorizing their events, setting the reminders, inviting friends. It also supports other useful functionalities, such as showing location, reporting weather.
 
-Most operations are supported by voice control.
+All operations are supported by voice control.
 
 <img src="https://github.com/NijikonUS/Live2D-Launcher/raw/master/doc/Picture6.png" width="60%" height="60%">  
+
+Enjoy.
